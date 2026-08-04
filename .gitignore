@@ -3,6 +3,7 @@
 # Copyrighted source textbooks (kept local only, not distributed)
 /Sources/
 /*.pdf
+/*.epub
 
 # Data generation tooling & artifacts
 /scripts/
