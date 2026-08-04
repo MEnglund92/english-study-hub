@@ -1,0 +1,36 @@
+# App runtime files are kept; all dev/build artifacts and copyrighted sources are ignored.
+
+# Copyrighted source textbooks (kept local only, not distributed)
+/Sources/
+/*.pdf
+
+# Data generation tooling & artifacts
+/scripts/
+/extracted_texts/
+/*.txt
+/data.js.*
+/data_*.js
+/*_output.js
+/merge_entries.js
+/add_ne_entries.js
+/check_entry_quality.js
+/check_translations.js
+/cleanup_definitions.js
+
+# Python build artifacts
+__pycache__/
+*.pyc
+*.py
+
+# Scratch / temp / preview files
+/redesign-preview.html
+/index.html.pre-s01-js
+/temp_*
+/_tmp_*
+/test_*.png
+/test_*.jpg
+
+# Dev-facing internal docs (not part of the app)
+/content-style-guide.md
+/docs/PROJECT_HANDOFF.md
+/docs/SOURCE_INVENTORY.md
