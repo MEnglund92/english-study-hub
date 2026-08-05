@@ -756,16 +756,6 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(2,132,199,0.08)}
    <button class="nav-item" data-tab="exercises" title="Grammar and vocabulary exercises"><span>&#9999;&#65039;</span><span class="nav-label">Exercises</span></button>
    <button class="nav-item" data-tab="dashboard" title="Progress overview and statistics"><span>&#128202;</span><span class="nav-label">Dashboard</span></button>
   </div>
-  <div class="side-inner side-summary">
-    <h3 class="side-label">Content</h3>
-    <div class="side-sum-rows" id="sideSummary">
-     <div class="side-sum-row"><span class="side-sum-label">Glossary terms</span><span class="side-sum-value">0</span></div>
-     <div class="side-sum-row"><span class="side-sum-label">Concepts</span><span class="side-sum-value">0</span></div>
-     <div class="side-sum-row"><span class="side-sum-label">Recall cards</span><span class="side-sum-value">0</span></div>
-     <div class="side-sum-row"><span class="side-sum-label">Audio files</span><span class="side-sum-value">0</span></div>
-     <div class="side-sum-row"><span class="side-sum-label">Resources</span><span class="side-sum-value">0</span></div>
-    </div>
-  </div>
 </nav>
 <!-- MAIN CONTENT -->
 <main class="main">
@@ -3933,9 +3923,20 @@ function renderHome(){
    {n:2,t:'Learn new words',d:'Start a Daily Session or flip through Flash Cards to add words to your spaced repetition queue.'},
    {n:3,t:'Review every day',d:'Keep your streak alive, hit your daily goal, and let SRS schedule reviews right before you forget.'}
   ];
-  let stepCards=steps.map(function(s){
-   return '<div class="home-step"><div class="home-step-num">'+s.n+'</div><div class="home-step-title">'+s.t+'</div><div class="home-step-desc">'+s.d+'</div></div>';
-  }).join('');
+   let stepCards=steps.map(function(s){
+    return '<div class="home-step"><div class="home-step-num">'+s.n+'</div><div class="home-step-title">'+s.t+'</div><div class="home-step-desc">'+s.d+'</div></div>';
+   }).join('');
+   let nConcepts=concepts?Object.keys(concepts).length:0;
+   let nResources=0;
+   if(typeof resourcesData!=='undefined'&&resourcesData)for(let k of Object.keys(resourcesData))if(Array.isArray(resourcesData[k]))nResources+=resourcesData[k].length;
+   let nExercises=(typeof exercises!=='undefined'&&exercises)?exercises.length:0;
+   let contentRows=[
+    {l:'Glossary terms',v:totalWords},{l:'Concepts',v:nConcepts},{l:'Recall cards',v:totalWords},
+    {l:'Audio files',v:totalWords},{l:'Resources',v:nResources},{l:'Exercises',v:nExercises}
+   ];
+   let contentCards=contentRows.map(function(r){
+    return '<div class="side-sum-row"><span class="side-sum-label">'+r.l+'</span><span class="side-sum-value">'+r.v.toLocaleString()+'</span></div>';
+   }).join('');
   el.innerHTML=
    '<div class="home-hero">'+
     '<div class="home-tag">&#8212; Invest in your education &#8212;</div>'+
@@ -3945,7 +3946,8 @@ function renderHome(){
    '<div class="dash-stats">'+statsCards+'</div>'+
    '<div class="dash-quick"><div class="dash-header">Quick Actions</div><div class="dash-qa-row">'+qaBtns+'</div></div>'+
    '<div class="home-section"><div class="home-section-title">What you can do here</div><div class="home-tools">'+toolCards+'</div></div>'+
-   '<div class="home-section"><div class="home-section-title">Start here</div><div class="home-steps">'+stepCards+'</div></div>';
+   '<div class="home-section"><div class="home-section-title">Start here</div><div class="home-steps">'+stepCards+'</div></div>'+
+   '<div class="home-section"><div class="home-section-title">Content</div><div class="side-sum-rows" style="max-width:520px">'+contentCards+'</div></div>';
 }
 function renderDashboard(){
   let stats=currentCourse>=0?loadStats(courses[currentCourse].id):aggStats();
