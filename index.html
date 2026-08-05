@@ -720,14 +720,11 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(2,132,199,0.08)}
 @media(max-width:640px){
   body{min-height:100dvh}
   .app{grid-template-columns:1fr;grid-template-rows:auto 1fr;min-height:100dvh}
-  .main{min-height:100dvh;padding:12px 12px calc(94px + env(safe-area-inset-bottom))}
+  .main{min-height:100dvh;padding:12px 12px calc(24px + env(safe-area-inset-bottom))}
   .sidebar{display:none}
-  .nav{position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;width:100%;max-width:none;display:flex;flex-direction:row;align-items:center;background:var(--nav-bg);border-right:none;border-top:1px solid var(--border);z-index:60;padding:6px 4px calc(6px + env(safe-area-inset-bottom)) 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;box-shadow:0 -8px 24px rgba(0,0,0,0.35)}
-  .nav::-webkit-scrollbar{display:none}
-  .nav .side-inner{display:none}
-  .nav-items{flex-direction:row;align-items:center;gap:4px;padding:0;width:100%;justify-content:flex-start;overflow-x:visible}
-  .nav-item{flex-direction:column;align-items:center;justify-content:center;gap:3px;width:auto;height:auto;min-width:60px;max-width:none;padding:7px 8px 5px;border-radius:10px;flex-shrink:0}
-  .nav-item .nav-label{display:block;font-size:0.6rem;font-weight:600;line-height:1.2;white-space:nowrap}
+  .nav{display:none}
+  .brand{cursor:pointer;display:inline-block;padding:4px 6px 4px 0}
+  .brand::before{content:'\2039\00a0 ';font-weight:700;color:var(--accent)}
 }
 </style>
 </head>
@@ -774,7 +771,7 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(2,132,199,0.08)}
 <main class="main">
   <div class="main-header">
    <div>
-     <span class="brand"><span class="accent">E</span>nglish</span>
+     <span class="brand" onclick="goToTab('home')" title="Back to Home" role="button" tabindex="0"><span class="accent">E</span>nglish</span>
     <div class="brand-sub">&#8212; Invest in your education</div>
    </div>
     <div class="main-controls">
@@ -3923,8 +3920,9 @@ function renderHome(){
    {tab:'exam',icon:'&#128221;',name:'Exam',desc:'Timed exam per course or mixed'},
    {tab:'concepts',icon:'&#128161;',name:'Concepts',desc:'Deep-dive concept pages per course'},
    {tab:'exercises',icon:'&#9999;&#65039;',name:'Exercises',desc:'Grammar and vocabulary exercises'},
-   {tab:'audio',icon:'&#128266;',name:'Audio',desc:'Listen to words and phrases with TTS'},
-   {tab:'resources',icon:'&#128206;',name:'Resources',desc:'PDFs, links and study materials'},
+{tab:'audio',icon:'&#128266;',name:'Audio',desc:'Listen to words and phrases with TTS'},
+    {tab:'s01',icon:'&#127916;',name:'S01 Audio',desc:'Recorded audio deck: cards, quiz, match, notes'},
+    {tab:'resources',icon:'&#128206;',name:'Resources',desc:'PDFs, links and study materials'},
    {tab:'dashboard',icon:'&#128202;',name:'Dashboard',desc:'Progress, charts, streaks and stats'}
   ];
   let toolCards=tools.map(function(t){
