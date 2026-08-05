@@ -718,13 +718,27 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(2,132,199,0.08)}
 @media(max-width:480px){.s01-note-row{flex-wrap:wrap}.s01-note-word{flex-basis:100%}.study-mode-btn{font-size:0.7rem;padding:8px 10px}}
 /* === APP MODE (mobile / iPhone) === */
 @media(max-width:640px){
-  body{min-height:100dvh}
+  html,body{overscroll-behavior-y:none}
+  body{min-height:100dvh;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+  input,textarea,.search-box,.cloze-input{-webkit-user-select:auto;user-select:auto}
   .app{grid-template-columns:1fr;grid-template-rows:auto 1fr;min-height:100dvh}
-  .main{min-height:100dvh;padding:12px 12px calc(24px + env(safe-area-inset-bottom))}
+  .main{min-height:100dvh;padding:calc(12px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left))}
   .sidebar{display:none}
   .nav{display:none}
   .brand{cursor:pointer;display:inline-block;padding:4px 6px 4px 0}
   .brand::before{content:'\2039\00a0 ';font-weight:700;color:var(--accent)}
+  /* larger touch targets & app-like cards */
+  .quiz-opt,.exam-opt{min-height:52px;border-radius:16px}
+  .quiz-opt .opt-letter,.exam-opt .opt-letter{width:30px;height:30px;line-height:30px;border-radius:8px;font-size:0.85rem}
+  .quiz-next,.exam-nav button,.exam-start-btn,.cloze-submit,.unscramble-submit,.dash-actions button{min-height:46px;border-radius:14px}
+  .quiz-trans-btn,.quiz-rus-btn,.course-pill{min-height:42px;border-radius:14px}
+  .home-tool{min-height:52px;border-radius:16px;padding:12px 14px}
+  .dash-qa,#homeContent .dash-qa{min-height:48px;border-radius:14px}
+  .home-step{border-radius:14px}
+  .home-hero{border-radius:16px}
+  .dash-stat{border-radius:14px}
+  .dash-card{border-radius:16px}
+  .quiz-opt:active:not(:disabled),.exam-opt:active:not(:disabled),.quiz-next:active:not(:disabled),.exam-nav button:active:not(:disabled),.home-tool:active,.dash-qa:active,.course-pill:active,.dash-actions button:active{transform:scale(0.98)}
 }
 </style>
 </head>
