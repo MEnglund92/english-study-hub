@@ -263,6 +263,7 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(2,132,199,0.08)}
 .home-hero h1{font-family:var(--font-serif);font-size:1.3rem;color:var(--text);margin:0 0 4px}
 .home-hero .home-tag{color:var(--accent);font-size:0.72rem;font-weight:600;letter-spacing:0.03em}
 .home-hero p{color:var(--text-secondary);font-size:0.8rem;max-width:620px;margin:8px auto 0;line-height:1.5}
+.home-version{display:inline-block;margin-top:12px;font-size:0.62rem;color:var(--text-tertiary);border:1px solid var(--border);border-radius:10px;padding:3px 10px}
 .home-section{margin-top:14px}
 .home-section-title{font-size:0.66rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 8px}
 .home-tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
@@ -3956,6 +3957,7 @@ function renderHome(){
     '<div class="home-tag">&#8212; Invest in your education &#8212;</div>'+
     '<h1>Welcome to English</h1>'+
     '<p>Your personal vocabulary and grammar studio. Explore '+courses.length+' courses with '+totalWords+' words, practice with a dozen tools, and let spaced repetition make it stick.</p>'+
+    '<div class="home-version">Build v1.1 &middot; App Mode</div>'+
    '</div>'+
    '<div class="dash-stats">'+statsCards+'</div>'+
    '<div class="dash-quick"><div class="dash-header">Quick Actions</div><div class="dash-qa-row">'+qaBtns+'</div></div>'+
@@ -5258,4 +5260,20 @@ document.querySelectorAll('[data-s01mode]').forEach(b=>{
     initS01();
   });
 });
+</script>
+<script>
+if('serviceWorker' in navigator){
+  try{
+    navigator.serviceWorker.register('sw.js').then(function(reg){
+      reg.addEventListener('updatefound',function(){
+        var nw=reg.installing;
+        if(nw)nw.addEventListener('statechange',function(){
+          if(nw.state==='activated'&&navigator.serviceWorker.controller){
+            window.location.reload();
+          }
+        });
+      });
+    }).catch(function(){});
+  }catch(e){}
+}
 </script>
