@@ -716,6 +716,19 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(2,132,199,0.08)}
 .confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:9999;animation:confettiFall 1.2s ease-out forwards}
 @keyframes confettiFall{0%{opacity:1;transform:translateY(0) rotate(0deg) scale(1)}100%{opacity:0;transform:translateY(120px) rotate(720deg) scale(0.3)}}
 @media(max-width:480px){.s01-note-row{flex-wrap:wrap}.s01-note-word{flex-basis:100%}.study-mode-btn{font-size:0.7rem;padding:8px 10px}}
+/* === APP MODE (mobile / iPhone) === */
+@media(max-width:640px){
+  body{min-height:100dvh}
+  .app{grid-template-columns:1fr;grid-template-rows:auto 1fr;min-height:100dvh}
+  .main{min-height:100dvh;padding:12px 12px calc(94px + env(safe-area-inset-bottom))}
+  .sidebar{display:none}
+  .nav{position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;width:100%;max-width:none;display:flex;flex-direction:row;align-items:center;background:var(--nav-bg);border-right:none;border-top:1px solid var(--border);z-index:60;padding:6px 4px calc(6px + env(safe-area-inset-bottom)) 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;box-shadow:0 -8px 24px rgba(0,0,0,0.35)}
+  .nav::-webkit-scrollbar{display:none}
+  .nav .side-inner{display:none}
+  .nav-items{flex-direction:row;align-items:center;gap:4px;padding:0;width:100%;justify-content:flex-start;overflow-x:visible}
+  .nav-item{flex-direction:column;align-items:center;justify-content:center;gap:3px;width:auto;height:auto;min-width:60px;max-width:none;padding:7px 8px 5px;border-radius:10px;flex-shrink:0}
+  .nav-item .nav-label{display:block;font-size:0.6rem;font-weight:600;line-height:1.2;white-space:nowrap}
+}
 </style>
 </head>
 <body>
@@ -4058,6 +4071,7 @@ function goToTab(id){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   let tabBtn=document.querySelector('.nav-item[data-tab="'+id+'"]');
   if(tabBtn)tabBtn.classList.add('active');
+  if(tabBtn&&window.matchMedia('(max-width:640px)').matches){try{tabBtn.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}}
   document.getElementById('tab-'+id).classList.add('active');
   activeTab=id;
   if(id==='home')renderHome();
@@ -4099,6 +4113,7 @@ document.querySelectorAll('.nav-item').forEach(btn=>{btn.addEventListener('click
   let mode=this.dataset.mode;
   document.querySelectorAll('.nav-item').forEach(t=>t.classList.remove('active'));
   this.classList.add('active');
+  if(window.matchMedia('(max-width:640px)').matches){try{this.scrollIntoView({block:'nearest',inline:'nearest'});}catch(e){}}
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
   activeTab=id;
