@@ -25,6 +25,7 @@ __pycache__/
 
 # Scratch / temp / preview files
 /redesign-preview.html
+/concept.html
 /index.html.pre-s01-js
 /temp_*
 /_tmp_*
