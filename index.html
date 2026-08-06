@@ -276,6 +276,14 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(180,83,9,0.08)}
 .course-name{font-weight:700;font-size:.9rem}
 .course-meta{font-size:.72rem;color:var(--text-secondary);margin-top:2px}
 .course-play{flex:0 0 auto;width:36px;height:36px;border-radius:50%;border:1px solid var(--hover-border);background:var(--surface-2);color:var(--accent);display:inline-flex;align-items:center;justify-content:center;font-size:.8rem}
+.home-greet{font-family:var(--font-serif);font-size:1.6rem;font-weight:700;line-height:1.15}
+.home-sub{color:var(--text-secondary);font-size:.84rem;margin-top:2px}
+.home-version{display:inline-block;margin-top:6px;font-size:.62rem;color:var(--text-tertiary);border:1px solid var(--border);border-radius:10px;padding:3px 10px}
+.home-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 4px}
+.stat-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:12px}
+.stat-num{font-size:1.3rem;font-weight:800;color:var(--accent);font-family:var(--font-serif);line-height:1.2}
+.stat-lbl{font-size:.66rem;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-top:3px}
+.stat-sub{font-size:.68rem;color:var(--accent-2);margin-top:3px}
 .home-section-title{font-size:0.66rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;margin:0 0 8px}
 .home-tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
 .home-tool{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--card-bg);cursor:pointer;text-align:left;transition:all .2s;font-family:var(--font-ui);color:var(--text)}
@@ -3943,14 +3951,12 @@ function renderHome(){
   let weak=getWeakEntries().length;
   let stats=[
    {v:courses.length,l:'Courses'},
-   {v:totalWords,l:'Words'},
+   {v:totalWords.toLocaleString(),l:'Words'},
    {v:sd.count+(sd.count>0?' '+sd.emoji:''),l:'Day Streak'},
-   {v:todayCount+'/'+goal,l:'Today Goal',sub:todayCount>=goal?'&#127881; Goal reached!':goalPct+'% there'},
-   {v:due,l:'SRS Due'},
-   {v:weak,l:'Weak Words'}
+   {v:todayCount+'/'+goal,l:'Today Goal',sub:todayCount>=goal?'&#127881; Goal reached!':goalPct+'% there'}
   ];
   let statsCards=stats.map(function(s){
-   return '<div class="dash-stat"><div class="dash-stat-val">'+s.v+'</div><div class="dash-stat-lbl">'+s.l+'</div>'+(s.sub?'<div class="dash-stat-sub">'+s.sub+'</div>':'')+'</div>';
+   return '<div class="stat-card"><div class="stat-num">'+s.v+'</div><div class="stat-lbl">'+s.l+'</div>'+(s.sub?'<div class="stat-sub">'+s.sub+'</div>':'')+'</div>';
   }).join('');
   let qaBtns=
    '<button class="dash-qa" onclick="goToTab(\'learn\')">&#128218; Daily Session</button>'+
@@ -4006,14 +4012,11 @@ function renderHome(){
     return '<button class="course-card" style="background:var('+tones[i%tones.length]+')" onclick="openCourseBrowse('+i+')"><div><div class="course-name">'+c.name+'</div><div class="course-meta">'+n.toLocaleString()+' words · '+pct+'% done</div></div><span class="course-play">&#9654;</span></button>';
    }).join('');
   el.innerHTML=
-   '<div class="home-hero">'+
-    '<div class="home-tag">&#8212; Invest in your education &#8212;</div>'+
-    '<h1>Welcome to English</h1>'+
-    '<p>Your personal vocabulary and grammar studio. Explore '+courses.length+' courses with '+totalWords+' words, practice with a dozen tools, and let spaced repetition make it stick.</p>'+
-    '<div class="home-version">Build v1.2 &middot; App Mode</div>'+
-   '</div>'+
+   '<div class="home-greet">Hello! &#128075;</div>'+
+   '<div class="home-sub">Ready to continue learning English?</div>'+
+   '<div class="home-version">Build v1.2 &middot; App Mode</div>'+
+   '<div class="home-stats">'+statsCards+'</div>'+
    '<div class="home-section"><div class="home-section-title">Courses</div><div class="course-list">'+courseCards+'</div></div>'+
-   '<div class="dash-stats">'+statsCards+'</div>'+
    '<div class="dash-quick"><div class="dash-header">Quick Actions</div><div class="dash-qa-row">'+qaBtns+'</div></div>'+
    '<div class="home-section"><div class="home-section-title">What you can do here</div><div class="home-tools">'+toolCards+'</div></div>'+
    '<div class="home-section"><div class="home-section-title">Start here</div><div class="home-steps">'+stepCards+'</div></div>'+
