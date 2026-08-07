@@ -36,3 +36,6 @@ __pycache__/
 /content-style-guide.md
 /docs/PROJECT_HANDOFF.md
 /docs/SOURCE_INVENTORY.md
+
+# Standalone Exlearn app copy (separate project, not part of this hub)
+/ExlearnApp-main/
