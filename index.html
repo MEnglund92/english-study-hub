@@ -1042,11 +1042,12 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(180,83,9,0.08)}
     <div id="conceptContent"></div>
     </div>
    </div>
-  <div class="tab-panel" id="tab-exercises">
-  <div class="concept-controls">
-  <select class="concept-select" id="exerciseSelect"><option value="">Select an exercise...</option></select>
-  <button id="exerciseTransBtn" class="quiz-trans-btn">Show Translation</button>
-  </div>
+   <div class="tab-panel" id="tab-exercises">
+   <div class="concept-controls">
+   <select class="concept-select" id="exerciseCourse"><option value="all">All Courses</option></select>
+   <select class="concept-select" id="exerciseSelect"><option value="">Select an exercise...</option></select>
+   <button id="exerciseTransBtn" class="quiz-trans-btn">Show Translation</button>
+   </div>
   <div id="exerciseWrap">
   <div class="tool-start" id="exerciseStart">
   <div class="icon">&#9999;&#65039;</div>
@@ -2276,7 +2277,7 @@ function switchCourse(){
    else if(activeTab==='concepts'){updateConceptCourseSel();renderConceptList();}
    else if(activeTab==='cloze')showClozeStart();
    else if(activeTab==='unscramble')showUnsStart();
-   else if(activeTab==='exercises'){updateExerciseSelect();renderExercise();}
+   else if(activeTab==='exercises'){initExercisesTab();}
    else if(activeTab==='resources')renderResources();
    else if(activeTab==='exam'){updateExamCourseSel();updateExamCategorySel();showExamStart();}
    else if(activeTab==='dashboard')renderDashboard();
@@ -3789,12 +3790,42 @@ function updateExerciseSelect(){
   let prev=sel.value;
   sel.innerHTML='<option value="">Select an exercise...</option>';
   if(typeof exercises==='undefined'||!exercises)return;
+  let courseSel=document.getElementById('exerciseCourse');
+  let course=courseSel?courseSel.value:'all';
   exercises.forEach((e,i)=>{
+    if(course!=='all'&&(e.course||'')!==course)return;
     let o=document.createElement('option');
     o.value=i;o.textContent=e.title;
     sel.appendChild(o);
   });
   if(prev&&prev!=='')sel.value=prev;
+}
+function popExerciseCourses(){
+  let sel=document.getElementById('exerciseCourse');
+  if(!sel)return;
+  let prev=sel.value;
+  sel.innerHTML='<option value="all">All Courses</option>';
+  if(typeof exercises==='undefined'||!exercises)return;
+  let names={};
+  if(typeof courses!=='undefined')courses.forEach(c=>{if(c&&c.id)names[c.id]=c.name;});
+  let seen={};
+  exercises.forEach(e=>{
+    let c=e.course||'';
+    if(!c||seen[c])return;
+    seen[c]=1;
+    let o=document.createElement('option');
+    o.value=c;o.textContent=names[c]||c;
+    sel.appendChild(o);
+  });
+  if(prev&&prev!=='all')sel.value=prev;
+}
+document.getElementById('exerciseCourse').addEventListener('change',function(){
+  updateExerciseSelect();
+});
+function initExercisesTab(){
+  popExerciseCourses();
+  updateExerciseSelect();
+  renderExercise();
 }
 function renderExercise(){
   let sel=document.getElementById('exerciseSelect');
@@ -4542,7 +4573,7 @@ function renderHome(){
   el.innerHTML=
    '<div class="home-greet">Hello! &#128075;</div>'+
    '<div class="home-sub">Ready to continue learning English?</div>'+
-   '<div class="home-version">Build v1.3 &middot; App Mode</div>'+
+   '<div class="home-version">Build v1.4 &middot; App Mode</div>'+
    '<div class="home-stats">'+statsCards+'</div>'+
    '<div class="home-section"><div class="home-section-title">Courses</div><div class="course-list">'+courseCards+'</div></div>'+
    '<div class="dash-quick"><div class="dash-header">Quick Actions</div><div class="dash-qa-row">'+qaBtns+'</div></div>'+
@@ -4685,7 +4716,7 @@ function goToTab(id){
   if(id==='cloze'){updateClozeCategorySel();showClozeStart();}
   if(id==='unscramble'){updateUnsCategorySel();showUnsStart();}
   if(id==='concepts'){updateConceptCourseSel();renderConceptList();}
-  if(id==='exercises'){updateExerciseSelect();renderExercise();}
+  if(id==='exercises'){initExercisesTab();}
   if(id==='exam'){updateExamCourseSel();updateExamCategorySel();showExamStart();}
   if(id==='browse'){updateBrowseCourseSel();}
   if(id==='resources')renderResources();
@@ -4737,7 +4768,7 @@ document.querySelectorAll('.nav-item').forEach(btn=>{btn.addEventListener('click
   else if(id==='unscramble'){updateUnsCategorySel();showUnsStart();}
   else if(id==='browse'){updateBrowseCourseSel();}
     else if(id==='concepts'){updateConceptCourseSel();renderConceptList();}
-  else if(id==='exercises'){updateExerciseSelect();renderExercise();}
+  else if(id==='exercises'){initExercisesTab();}
   else if(id==='resources'){renderResources();}
     else if(id==='exam'){updateExamCourseSel();updateExamCategorySel();showExamStart();}
   else if(id==='dashboard'){renderDashboard();}
