@@ -480,6 +480,8 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(180,83,9,0.08)}
 .resource-card .res-level{font-size:0.6rem;color:var(--accent);display:inline-block;margin-left:4px;padding:1px 6px;border-radius:4px;border:1px solid var(--border);font-weight:700;vertical-align:middle}
 .resource-card .res-open{font-size:0.62rem;color:var(--accent);padding:3px 10px;border-radius:6px;border:1px solid var(--border);font-weight:600;white-space:nowrap;transition:all .2s;font-family:var(--font-ui);flex-shrink:0}
 .resource-card:hover .res-open{background:var(--accent-soft);border-color:var(--accent)}
+.resource-card.res-pending{opacity:0.85;border-style:dashed}
+.res-note{font-size:0.7rem;color:var(--text-tertiary);margin-top:14px;line-height:1.6;padding:0 4px}
 .resource-card audio{width:100%;margin-top:8px;border-radius:8px}
 .exam-controls{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
 .exam-controls select{padding:7px 12px;border-radius:10px;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:0.82rem;outline:none;cursor:pointer;font-family:var(--font-ui)}
@@ -545,6 +547,23 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(180,83,9,0.08)}
 .sp-stat .sp-val{font-size:1.1rem;font-weight:700;color:var(--accent);font-family:var(--font-serif)}
 .sp-stat .sp-lbl{font-size:0.62rem;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.04em;font-weight:600}
 .concept-resources-section{background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:16px 20px;margin-bottom:16px}
+.concept-progress{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:14px}
+.concept-progress-head{display:flex;justify-content:space-between;gap:10px;font-size:0.78rem;color:var(--text-secondary);font-weight:600;margin-bottom:8px;flex-wrap:wrap}
+.concept-progress-bar{height:8px;border-radius:6px;background:var(--surface-2);overflow:hidden}
+.concept-progress-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .4s ease}
+.concept-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.concept-lesson-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:13px 14px;cursor:pointer;color:var(--text);transition:all .2s;font-family:var(--font-ui)}
+.concept-lesson-card:hover{border-color:var(--accent);transform:translateY(-1px)}
+.concept-lesson-check{flex:0 0 auto;width:24px;height:24px;border-radius:50%;border:1px solid var(--border);display:inline-flex;align-items:center;justify-content:center;font-size:.75rem;color:var(--accent);background:var(--surface-2)}
+.concept-lesson-main{flex:1;min-width:0}
+.concept-lesson-title{display:block;font-size:0.86rem;font-weight:600;line-height:1.35;color:var(--text)}
+.concept-lesson-meta{display:block;font-size:0.68rem;color:var(--text-tertiary);margin-top:2px}
+.concept-lesson-open{flex:0 0 auto;font-size:0.7rem;color:var(--accent);font-weight:600;white-space:nowrap}
+.concept-nav{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+.concept-nav-btn{padding:9px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:0.76rem;cursor:pointer;font-family:var(--font-ui);transition:all .2s;flex:1;min-width:90px}
+.concept-nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.concept-nav-btn:disabled{opacity:.4;cursor:default}
+.concept-nav-btn.concept-read-btn{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
 .concept-resources-section h4{font-size:0.85rem;color:var(--text);margin-bottom:10px}
 .speaker-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:var(--card-bg);cursor:pointer;font-size:0.8rem;transition:all .2s;touch-action:manipulation;margin-left:6px;vertical-align:middle}
 .speaker-btn:hover{border-color:var(--accent);box-shadow:0 0 8px rgba(251,191,36,0.15)}
@@ -1004,22 +1023,25 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(180,83,9,0.08)}
   </div>
   </div>
   </div>
-  <div class="tab-panel" id="tab-concepts">
-  <div class="concept-controls">
-   <select class="concept-select" id="conceptCourse"></select>
-   <select class="concept-select" id="conceptTopic"><option value="">Select a topic...</option></select>
-   <button id="conceptTransBtn" class="quiz-trans-btn">Show Translation</button>
+<div class="tab-panel" id="tab-concepts">
+   <div class="concept-controls">
+    <select class="concept-select" id="conceptCourse"></select>
+    <select class="concept-select" id="conceptTopic" style="display:none"><option value="">Select a topic...</option></select>
+    <input type="text" class="search-box" id="conceptSearch" placeholder="Search lessons...">
+    <button id="conceptTransBtn" class="quiz-trans-btn">Show Translation</button>
+    </div>
+    <div id="conceptProgress" class="concept-progress" style="display:none"></div>
+    <div id="conceptList"></div>
+    <div id="conceptWrap">
+    <div class="tool-start" id="conceptStart">
+    <div class="icon">&#128161;</div>
+    <p class="tool-start-title">Select a course to begin</p>
+    <p class="tool-start-sub">Choose a course above &mdash; its lessons will appear here for you to read and learn</p>
+    <button class="tool-start-btn" onclick="beginConcepts()">&#128161; Show lessons</button>
+    </div>
+    <div id="conceptContent"></div>
+    </div>
    </div>
-   <div id="conceptWrap">
-   <div class="tool-start" id="conceptStart">
-   <div class="icon">&#128161;</div>
-   <p class="tool-start-title">Select a topic above to begin</p>
-   <p class="tool-start-sub">Choose a course and topic &mdash; select options above and the concept pages will appear</p>
-   <button class="tool-start-btn" onclick="beginConcepts()">&#128161; Begin</button>
-   </div>
-   <div id="conceptContent"></div>
-   </div>
-  </div>
   <div class="tab-panel" id="tab-exercises">
   <div class="concept-controls">
   <select class="concept-select" id="exerciseSelect"><option value="">Select an exercise...</option></select>
@@ -1041,9 +1063,10 @@ body.light-mode .search-box:focus{box-shadow:0 0 12px rgba(180,83,9,0.08)}
   <div class="res-filter-row" id="resFilterRow"></div>
   <select id="resLevel" class="concept-select" style="width:auto;flex-shrink:0"><option value="">All Levels</option><option value="A2">A2</option><option value="B1">B1</option><option value="B2">B2</option><option value="C1">C1</option></select>
   </div>
-  <div class="card-grid" id="resGrid"></div>
-  </div>
-  <div class="tab-panel" id="tab-audio">
+<div class="card-grid" id="resGrid"></div>
+   <div class="res-note">&#128276; Reference links are hosted externally and can change. If a link stops working, ask to update it. Learning content lives in the Concepts lessons.</div>
+   </div>
+   <div class="tab-panel" id="tab-audio">
   <div class="flash-controls">
   <select id="audioCourse"></select>
   <select id="audioCategory"></select>
@@ -1258,116 +1281,547 @@ const BROWSE_PAGE_SIZE=50;
 function hasMeaning(e){return !!(e&&e.meaning&&String(e.meaning).trim());}
 const resourcesData={
   pdf:[
-    {name:"S01 Vocab Quiz Deck",desc:"Quiz deck for the 522 S01 audio words",file:"docs/new Quiz - S01.pdf",course:"Exlearn Advanced English",level:"C1"},
-    {name:"English Vocab in Use Upper-Int",desc:"Core vocabulary textbook with 100 units",file:"English Vocabulary in Use - Upper-intermediate (Michael McCarthy,Felicity ODell) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"English Vocabulary in Use Upper-Int",level:"B2"},
-    {name:"Test Your Vocab Upper-Int",desc:"Practice tests for EVU Upper-Intermediate",file:"test your english vocabulary in use - upper-intermediate (Michael McCarthy, Felicity ODell) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"English Vocabulary in Use Upper-Int",level:"B2"},
-    {name:"Reactivate C1-C2 Student's Book",desc:"Grammar and vocabulary for C1-C2 level",file:"Reactivate Your Grammar  Vocabulary C1C2. Students Book (Alexandra Green) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Reactivate C1-C2",level:"C1"},
-    {name:"Reactivate C1-C2 Answer Key",desc:"Answer key for Reactivate exercises",file:"Reactivate your Grammar and Vocabulary for C1-C2 (Answer Key) (Alexandra Green) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Reactivate C1-C2",level:"C1"},
-    {name:"Cambridge Advanced Trainer",desc:"6 practice tests with answers for C1 Advanced",file:"Cambridge English. Advanced trainer. 6 practice tests with answers (ODell Felicity.) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"C1 Advanced Trainer",level:"C1"},
-    {name:"Complete Advanced Workbook",desc:"Workbook with answers for Complete Advanced 2nd ed",file:"Complete Advanced Workbook with Answers, 2nd ed (Audio CD) (Laura Matthews, Barbara Thomas) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"C1 Advanced Trainer",level:"C1"},
-    {name:"Destination C1-C2",desc:"Grammar and vocabulary with answer key",file:"Destination C1  C2  grammar  vocabulary with answer key (Malcolm Mann Steve Taylore-Knowles) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Destination C1-C2",level:"C1"},
-    {name:"Academic Vocab in Use",desc:"50 units of academic vocabulary reference and practice",file:"Academic vocabulary in use  50 units of academic vocabulary reference and practice  self-study and classroom use (McCarthy, Michael, ODell, Felicity Author) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Academic Vocabulary in Use",level:"B2"},
-    {name:"English Idioms in Use Advanced",desc:"Idioms reference and practice for advanced learners",file:"English Idioms in Use Advanced Book with Answers (Felicity ODell, Michael McCarthy) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"English Idioms in Use Advanced",level:"C1"},
-    {name:"Business Vocab in Use Advanced",desc:"Business vocabulary for advanced learners",file:"Business Vocabulary in Use Advanced with Answers (2018) (Bill Mascull) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Business Vocabulary in Use Advanced",level:"C1"},
-    {name:"Cambridge IELTS Vocab Advanced",desc:"Vocabulary for IELTS Advanced (Band 6.5+)",file:"Cambridge Vocabulary for IELTS Advanced (Pauline Cullen) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Cambridge Vocabulary for IELTS Advanced",level:"B2"},
-    {name:"Cambridge IELTS 21 Academic",desc:"21 practice tests with answers and digital pack",file:"Cambridge Ielts 21 Practice Tests Academic Students Book with Answers with Digital Pack (Unknown Author) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"IELTS Practice Tests",level:"B2"},
-    {name:"IELTS 16 Academic",desc:"Practice tests with answers and audio",file:"IELTS 16 Academic Students Book with Answers with Audio with Resource Bank (IELTS Practice Tests) (Cambridge) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"IELTS Practice Tests",level:"B2"},
-    {name:"IELTS Practice Tests Plus 3",desc:"Practice tests with answers",file:"IELTS Practice Tests Plus 3 (Matthews Margaret, Salisbury Katy.) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"IELTS Practice Tests",level:"B2"},
-    {name:"B1 Preliminary Trainer 1",desc:"6 practice tests for B1 Preliminary",file:"B1 Preliminary for Schools Trainer 1 for the Revised 2020 Exam Six Practice Tests with Answers and Teachers Notes with. (Cambridge University Press) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"B1 Preliminary Trainer",level:"B1"},
-    {name:"A2 Key for Schools Trainer",desc:"6 practice tests for A2 Key",file:"A2 KEY for School Trainer 2020 - Six practice tests with answers and teachers notes (Cambridge University Press) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"A2 Key Trainer",level:"A2"},
-    {name:"KET for Schools Trainer",desc:"Six practice tests with answers",file:"KET for Schools Trainer Six Practice Tests With Answers and Teachers Notes (Saxby Karen.) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"A2 Key Trainer",level:"A2"},
-    {name:"First Trainer 2",desc:"6 practice tests with answers for B2 First",file:"First Trainer 2 Six Practice Tests with Answers with Audio (Cambridge) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"B2 First Trainer",level:"B2"},
-    {name:"Oxford Word Skills Idioms",desc:"Idioms and phrasal verbs student book with key",file:"Oxford Word Skills Advanced Idioms  Phrasal Verbs Student Book with Key (Ruth Gairns, Stuart Redman) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Grammar & Usage",level:"C1"},
-    {name:"Oxford Practice Grammar Intermediate",desc:"Intermediate grammar tests",file:"Oxford Practice Grammar. Intermediate Tests (John Eastwood) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Grammar & Usage",level:"B1"},
-    {name:"Oxford Practice Grammar Advanced",desc:"Advanced supplementary exercises",file:"Oxford Practice Grammar Advanced Supplementary Exercises (George Yule) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Grammar & Usage",level:"C1"},
-    {name:"English Grammar in Use Suppl.",desc:"Supplementary exercises for EGU",file:"English Grammar in Use Supplementary Exercises Book with Answers To Accompany English Grammar in Use Fifth Edition (Louise Hashemi) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Grammar & Usage",level:"B1"},
-    {name:"Advanced Grammar in Use Suppl.",desc:"Supplementary exercises for Advanced Grammar",file:"Advanced Grammar in Use. Supplementary Exercises with Answers (Simon Haines, Mark Nettle, Martin Hewings) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Grammar & Usage",level:"C1"},
-    {name:"Longman Academic Writing Series 5",desc:"Essays to Research Papers",file:"Longman Academic Writing Series Essays to Research Papers Lvl 5 (Meyers, Alan) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Writing & Academic",level:"C1"},
-    {name:"Academic Writing & Grammar",desc:"Academic writing and grammar for students",file:"Academic Writing and Grammar for Students (Alex Osmond) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Writing & Academic",level:"B2"},
-    {name:"How to Write Better Essays",desc:"Essay writing guide",file:"How to Write Better Essays (Bryan Greetham) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Writing & Academic",level:"B2"},
-    {name:"LearnEm Good Writing",desc:"Simple and effective ways to improve writing skills",file:"LearnEm Good Writing  Improve Your Childs Writing Skills Simple and Effective Ways to Become Your Childs Writing Tutor at.â€¦ (Stuart Ackerman MSc.) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Writing & Academic",level:"A2"},
-    {name:"Essentials of Academic Writing",desc:"Academic writing for international students",file:"The Essentials of Academic Writing for International Students (Stephen Bailey) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Writing & Academic",level:"B2"},
-    {name:"The Psychologist's Companion",desc:"Scientific writing guide for students and researchers",file:"The Psychologists Companion A Guide to Scientific Writing for Students and Researchers (Robert J. Sternberg) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Writing & Academic",level:"C1"},
-    {name:"Natural English Reading & Writing",desc:"Pre-intermediate resource book",file:"Natural English. Reading  Writing Skills. pre-intermediate resource book (Theresa Clementson) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Writing & Academic",level:"A2"},
-    {name:"Study Skills for Postgraduates",desc:"Study skills for international postgraduates",file:"Study Skills for International Postgraduates (Bloomsbury Study Skills), 2nd Edition (Martin Davies) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Writing & Academic",level:"C1"},
-    {name:"Handbook of English for ESP",desc:"English for Specific Purposes handbook",file:"The Handbook of English for Specific Purposes (Sue Starfield, Christoph A. Hafner) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Writing & Academic",level:"C1"},
-    {name:"Social Theory for EAP",desc:"Foundations and perspectives for EAP",file:"Social Theory for English for Academic Purposes Foundations and Perspectives (Alex Ding Michelle Evans (editors)) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"Writing & Academic",level:"C1"},
-    {name:"Check Your TOEFL Vocabulary",desc:"TOEFL vocabulary workbook",file:"Check Your English Vocabulary for TOEFL (Rawdon Wyatt) (z-library.sk, 1lib.sk, z-lib.sk).pdf",course:"TOEFL Preparation",level:"B2"}
+    {name:"S01 Vocab Quiz Deck",desc:"Quiz deck for the 522 S01 audio words",file:"docs/new Quiz - S01.pdf",course:"Exlearn Advanced English",level:"C1"}
+  ],
+  websites:[
   ]
 };
 const concepts={
-  "academic-vocab":[{
-    "title":"Academic Word Lists & Usage",
-    "txt":".1. The Academic Word List (AWL)\\nThe AWL contains 570 word families that appear frequently in academic texts. Focus on words like analyse, concept, data, environment, factor, identify, interpret, method, process, and significant. Learning these words systematically improves academic reading comprehension and writing precision.\\n.2. Using Academic Vocabulary in Writing\\nAcademic writing requires formal register. Replace phrasal verbs with single-word alternatives: carry out -> conduct, find out -> discover, look at -> examine, go up -> increase, go down -> decrease. Use hedging language: suggests, indicates, appears, tends to.\\n.3. Collocations in Academic English\\nLearn words in their natural combinations: conduct research, draw a conclusion, provide evidence, reach a verdict, play a role, pose a question, shed light on. Recording collocations rather than isolated words leads to more natural academic writing.",
-    "translationSv":".1. Den akademiska ordlistan (AWL)\\nAWL innehåller 570 ordfamiljer som förekommer ofta i akademiska texter. Fokusera på ord som analys, begrepp, data, miljö, faktor, identifiera, tolka, metod, process och betydande. Att lära sig dessa ord systematiskt förbättrar akademisk läsförståelse och skrivprecision.\\n.2. Använda akademiskt ordförråd i skrivande\\nAkademiskt skrivande kräver formell stil. Byt ut partikelverb mot enordsalternativ: carry out -> genomföra, find out -> upptäcka, look at -> undersöka, go up -> öka, go down -> minska. Använd försiktighetsspråk: antyder, indikerar, verkar, tenderar att.\\n.3. Kollokationer i akademisk engelska\\nLär dig ord i deras naturliga kombinationer: bedriva forskning, dra en slutsats, tillhandahålla bevis, fälla en dom, spela en roll, ställa en fråga, belysa. Att anteckna kollokationer istället för isolerade ord leder till mer naturligt akademiskt skrivande.",
-    "take":["The AWL has 570 essential academic word families","Replace phrasal verbs with formal alternatives in writing","Learn academic collocations as phrases, not single words"],
-    "sections":[{"heading":"Reference","source":"Academic Vocabulary in Use","body":"Units 1-10 cover core academic vocabulary with examples in context."}]
-  },{
-    "title":"Writing Academic Paragraphs",
-    "txt":".1. Paragraph Structure (PEEL)\\nEvery academic paragraph should follow PEEL: Point (topic sentence stating the main idea), Evidence (data, quotes, or examples), Explanation (analysis connecting evidence to your point), Link (transition to the next paragraph). Paragraphs should typically be 100-200 words.\\n.2. Topic Sentences\\nThe first sentence of each paragraph must clearly state what the paragraph is about. A strong topic sentence: introduces the main idea, connects to the thesis, and signals the paragraph's focus. Avoid starting with 'This paragraph will discuss...' - be direct and specific.\\n.3. Cohesion and Linking\\nUse linking words to create flow: furthermore, in addition, moreover (adding); however, nevertheless, on the other hand (contrasting); consequently, therefore, as a result (cause-effect). Use reference words: this, these, such, the former, the latter.",
-    "translationSv":".1. Styckestruktur (PEEL)\\nVarje akademiskt stycke bör följa PEEL: Point (ämnesmening som anger huvudidén), Evidence (data, citat eller exempel), Explanation (analys som kopplar bevis till din poäng), Link (övergång till nästa stycke). Stycken bör vanligtvis vara 100-200 ord.\\n.2. Ämnesmeningar\\nDen första meningen i varje stycke måste tydligt ange vad stycket handlar om. En stark ämnesmening introducerar huvudidén, kopplar till avhandlingen och signalerar styckets fokus. Undvik att börja med 'Detta stycke kommer att diskutera...' - var direkt och specifik.\\n.3. Sammanhållning och länkning\\nAnvänd länkord för att skapa flyt: vidare, dessutom, ytterligare (lägga till); dock, likväl, å andra sidan (kontrastera); följaktligen, därför, som ett resultat (orsak-verkan). Använd referensord: detta, dessa, sådana, den förra, den senare.",
-    "take":["PEEL: Point, Evidence, Explanation, Link","Topic sentences must state the paragraph's main idea clearly","Linking words create cohesion and logical flow"],
-    "sections":[{"heading":"Resource","source":"Longman Academic Writing Series","body":"Chapter 3 covers paragraph structure with exercises for practice."}]
-  }],
-  "grammar":[
-    {
-      "title":"Advanced Writing: Structure & Organisation",
-      "txt":".1. Essay Structure (Part 1)\\nThe compulsory essay needs four paragraphs: Introduction (paraphrase the question, state your thesis), Body 1 (address the first given point with examples), Body 2 (address the second given point), Conclusion (summarise and add your own third point). Use formal register throughout.\\n.2. Proposal Structure\\nA proposal has: Purpose (why you are writing), Current Situation (background), Recommendations (specific suggestions with expected outcomes), Conclusion (summary). Use headings for each section. Use language like 'It is recommended that...' and 'The purpose of this proposal is to...'\\n.3. Report vs Proposal\\nA Report presents findings and analysis (what has been found). A Proposal makes recommendations for the future (what should be done). Reports use 'It was found that...', proposals use 'It is recommended that...'",
-      "translationSv":".1. Uppsatsstruktur (del 1)\\nDen obligatoriska uppsatsen behöver fyra stycken: Inledning (omformulera frågan, ange din tes), Brödtext 1 (behandla den första punkten med exempel), Brödtext 2 (behandla den andra punkten), Slutsats (sammanfatta och lägg till din egen tredje punkt). Använd formell stil genomgående.\\n.2. Förslagsstruktur\\nEtt förslag har: Syfte (varför du skriver), Nuläge (bakgrund), Rekommendationer (specifika förslag med förväntade resultat), Slutsats (sammanfattning). Använd rubriker för varje avsnitt. Använd språk som 'Det rekommenderas att...' och 'Syftet med detta förslag är att...'\\n.3. Rapport vs Förslag\\nEn rapport presenterar resultat och analys (vad som har hittats). Ett förslag ger rekommendationer för framtiden (vad som bör göras). Rapporter använder 'Det visade sig att...', förslag använder 'Det rekommenderas att...'",
-      "take":["Essay: thesis in introduction, two body paragraphs, conclusion with third point","Proposal: Purpose, Current Situation, Recommendations, Conclusion","Reports present findings; proposals recommend future action"],
-      "sections":[{"heading":"Model Answer","source":"Advanced Trainer, Cambridge","body":"Test 1 Writing model answer with examiner's comments shows how to structure a Part 1 essay."}]
-    },{
-      "title":"Collocation Awareness (C1)",
-      "txt":".1. What Are Collocations?\\nCollocations are words that naturally go together. At C1 level, you must recognise and use collocations accurately. Examples: heavy rain (not strong rain), make a decision (not do a decision), strong coffee (not powerful coffee), commit a crime (not make a crime).\\n.2. Verb-Noun Collocations\\nCommon patterns: give a lecture, pay attention, run a business, take turns, serve a purpose, keep in touch, break the news, draw attention to, take into consideration. Learning verbs in collocation patterns helps produce natural English.\\n.3. Adjective-Noun and Academic Collocations\\nAdjective-noun: solid evidence, major influence, plausible explanation, convincing argument. Academic: stimulate growth, conduct research, draw a conclusion, reach a verdict. Practise identifying collocations in reading texts and recording them in phrases, not isolated words.",
-      "translationSv":".1. Vad är kollokationer?\\nKollokationer är ord som naturligt går ihop. På C1-nivå måste du känna igen och använda kollokationer korrekt. Exempel: heavy rain (inte strong rain), make a decision (inte do a decision), strong coffee (inte powerful coffee), commit a crime (inte make a crime).\\n.2. Verb-substantiv kollokationer\\nVanliga mönster: hålla en föreläsning, vara uppmärksam, driva ett företag, turas om, tjäna ett syfte, hålla kontakten, bryta nyheten, uppmärksamma, ta i beaktande. Att lära sig verb i kollokationsmönster hjälper dig att producera naturlig engelska.\\n.3. Adjektiv-substantiv och akademiska kollokationer\\nAdjektiv-substantiv: solida bevis, stort inflytande, trolig förklaring, övertygande argument. Akademiska: stimulera tillväxt, bedriva forskning, dra en slutsats, fälla en dom. Öva på att identifiera kollokationer i lästexter och anteckna dem i fraser, inte isolerade ord.",
-      "take":["Collocations are word partnerships, not individual words","Record new vocabulary in full phrases","Academic collocations are essential for formal writing"],
-      "sections":[{"heading":"Resource","source":"Advanced Trainer, Cambridge","body":"Collocation tasks appear throughout the Use of English sections, especially Useful Language boxes."}]
-    },{
-      "title":"Register & Tone (C1)",
-      "txt":".1. Formal vs Informal Register\\nAt C1 level, you must switch between registers appropriately. Formal: avoiding contractions (do not vs don't), using advanced linkers (furthermore, nevertheless, consequently), precise vocabulary (purchase vs buy, demonstrate vs show). Informal: phrasal verbs, contractions, colloquial expressions.\\n.2. Hedging Language\\nFormal academic writing uses hedging to avoid absolute statements. Examples: It could be argued that..., It would appear that..., The evidence suggests that..., This seems to indicate..., One might conclude that... Hedging shows critical thinking and academic caution.\\n.3. Emphatic Structures\\nCleft sentences: What is needed is... / The reason why... is that... Inversion: Not only did they... / Rarely have I seen... / Only then did we realise... These add emphasis and variety to your writing, showing grammatical range.",
-      "translationSv":".1. Formell vs informell stil\\nPå C1-nivå måste du växla mellan stilar på lämpligt sätt. Formellt: undvik sammandragningar (do not vs don't), använd avancerade länkord (vidare, likväl, följaktligen), precist ordförråd (purchase vs buy, demonstrate vs show). Informellt: partikelverb, sammandragningar, vardagliga uttryck.\\n.2. Försiktighetsspråk\\nFormellt akademiskt skrivande använder försiktighetsspråk för att undvika absoluta påståenden. Exempel: Det skulle kunna hävdas att..., Det verkar som om..., Bevisen tyder på att..., Detta verkar indikera..., Man skulle kunna dra slutsatsen att... Försiktighetsspråk visar kritiskt tänkande och akademisk försiktighet.\\n.3. Emfatiska strukturer\\nCleft-meningar: Vad som behövs är... / Anledningen till att... är att... Inversion: Inte bara gjorde de... / Sällan har jag sett... / Först då insåg vi... Dessa lägger till betoning och variation i ditt skrivande och visar grammatisk bredd.",
-      "take":["Match register to text type (formal for reports, semi-formal for articles)","Use hedging to express caution in academic writing","Emphatic structures demonstrate grammatical range"],
-      "sections":[{"heading":"Exam Tip","source":"Advanced Trainer, Cambridge","body":"Useful Language boxes provide key phrases for different registers and functions."}]
-    },{
-      "title":"Polysemy Awareness (C1)",
-      "txt":".1. What is Polysemy?\\nPolysemy is when one word has multiple related meanings. For C1 Advanced, you need to recognise which meaning fits the context. Common examples: flat (apartment/flat surface/flat refusal/flat tyre), set (set the table/TV set/set text/sun sets/set off/set up).\\n.2. Why It Matters for CAE\\nReading and Use of English Part 1 tests your ability to choose the correct word based on context. Multiple-choice options often test different meanings of the same word. Understanding polysemy helps you eliminate wrong answers.\\n.3. Strategy for Learning\\nWhen you encounter a common word, look up all its meanings. Record each meaning with a different example sentence. Pay special attention to polysemous words that also form collocations and idioms: mean (a mean person/what does it mean?/mean score/no mean feat), bar (chocolate bar/coffee bar/bar smoking/bar code/called to the Bar).",
-      "translationSv":".1. Vad är polysemi?\\nPolysemi är när ett ord har flera relaterade betydelser. För C1 Advanced måste du känna igen vilken betydelse som passar sammanhanget. Vanliga exempel: flat (lägenhet/plan yta/rakt avståndande/ punkterat däck), set (duka/TV-apparat/ fast text/solen går ner/ge sig iväg/sätta upp).\\n.2. Varför det är viktigt för CAE\\nLäsning och användning av engelska del 1 testar din förmåga att välja rätt ord baserat på sammanhang. Flervalsalternativ testar ofta olika betydelser av samma ord. Att förstå polysemi hjälper dig att eliminera felaktiga svar.\\n.3. Inlärningsstrategi\\nNär du stöter på ett vanligt ord, slå upp alla dess betydelser. Anteckna varje betydelse med en annan exempelmening. Var särskilt uppmärksam på polysema ord som även bildar kollokationer och idiom: mean (en elak person/vad betyder det?/medelvärde/ingen liten bedrift), bar (chokladkaka/kaffebar/förbjuda rökning/streckkod/kallad till advokatsamfundet).",
-      "take":["Polysemy: one word with multiple related meanings","Context determines which meaning applies","Record multiple meanings with different examples"],
-      "sections":[{"heading":"Practice","source":"Advanced Trainer, Cambridge","body":"Exam Practice section tests understanding of polysemous words in context."}]
-    },{
-      "title":"C1 Speaking: Collaboration Strategies",
-      "txt":".1. Part 3 (Collaborative Task)\\nYou and your partner discuss a mind map with five options. Goal: negotiate and agree on the best option. Use the full 4 minutes. Start by discussing each option, give pros and cons, then agree on a decision. The examiner will then ask you a follow-up question about your decision.\\n.2. Useful Phrases for Discussion\\nSuggesting: One possibility would be to... / What about...? / How about...? / Another option is... Agreeing: That's a great idea. / I completely agree. / You have a point there. Disagreeing politely: I see what you mean, but... / That's a good point, however... / I'm not sure I agree because... Negotiating: Would you be prepared to...? / How about we compromise on...? / Let's try to find a middle ground.\\n.3. Part 4 (Follow-up Discussion)\\nThe examiner asks deeper questions related to the Part 3 topic. Give extended answers: state your opinion, give reasons, provide examples, make comparisons. Use linking phrases: The way I see it... / What I'm trying to say is... / That's an interesting question because...",
-      "translationSv":".1. Del 3 (Samarbetsuppgift)\\nDu och din partner diskuterar en mindmap med fem alternativ. Mål: förhandla och kom överens om det bästa alternativet. Använd hela 4 minuterna. Börja med att diskutera varje alternativ, ge för- och nackdelar, enas sedan om ett beslut. Examinatorn ställer sedan en följdfråga om ert beslut.\\n.2. Användbara fraser för diskussion\\nFöreslå: En möjlighet skulle vara att... / Vad sägs om...? / Hur skulle det vara...? / Ett annat alternativ är... Hålla med: Det är en bra idé. / Jag håller helt med. / Du har en poäng där. Oenighet artigt: Jag förstår vad du menar, men... / Det är en bra poäng, dock... / Jag är inte säker på att jag håller med eftersom... Förhandla: Skulle du vara beredd att...? / Vad sägs om att vi kompromissar om...? / Låt oss försöka hitta en mellanväg.\\n.3. Del 4 (Följdfrågor)\\nExaminatorn ställer djupare frågor relaterade till ämnet i del 3. Ge utökade svar: ange din åsikt, ge skäl, ge exempel, gör jämförelser. Använd länkfraser: Som jag ser det... / Vad jag försöker säga är... / Det är en intressant fråga för att...",
-      "take":["Discuss all options before deciding as a pair","Use polite negotiation and disagreement phrases","Part 4: extend answers with reasons and examples"],
-      "sections":[{"heading":"Practice Material","source":"Advanced Trainer, Cambridge","body":"Test 1 Training Speaking section (p14-17) covers Part 3 and Part 4 strategies with sample dialogues."}]
-    },{
-      "title":"Exam Technique & Time Management (C1)",
-      "txt":".1. Reading & Use of English Timing\\nTotal: 90 minutes for 8 parts. Part 1-4 (Use of English): allow 45-50 minutes. Part 5-8 (Reading): allow 40-45 minutes. Never spend more than 12 minutes on any part. If stuck, guess and move on.\\n.2. Writing Timing\\nPart 1 (Essay): 45 minutes (10 min plan, 30 min write, 5 min check). Part 2 (Article/Report/Review/Letter): 45 minutes. Always write a brief plan first. Check word count (220-260 for Part 1, 220-260 for Part 2).\\n.3. Listening and Common Traps\\nYou hear each recording twice. First listening: focus on gist and the first answer. Second listening: check your answers and find any you missed. Spelling matters \\u2014 write clearly. Watch for distractors: speakers often correct themselves or contradict the first thing they say.\\n.4. Speaking Tips\\nPart 1: prepare to talk about your hobbies, work/study, and future plans. Give 2-3 sentence answers. Part 2: compare the photos for about 1 minute, then answer the written question. Part 3: interact with your partner \\u2014 don't give a monologue. Part 4: develop your answers beyond one sentence.",
-      "translationSv":".1. Läsning och användning av engelska - tidshantering\\nTotalt: 90 minuter för 8 delar. Del 1-4 (Användning av engelska): avsätt 45-50 minuter. Del 5-8 (Läsning): avsätt 40-45 minuter. Lägg aldrig mer än 12 minuter på någon del. Om du kör fast, gissa och gå vidare.\\n.2. Skrivande - tidshantering\\nDel 1 (Uppsats): 45 minuter (10 min planera, 30 min skriva, 5 min kontrollera). Del 2 (Artikel/Rapport/Recension/Brev): 45 minuter. Skriv alltid en kort plan först. Kontrollera ordantal (220-260 för del 1, 220-260 för del 2).\\n.3. Lyssna och vanliga fallgropar\\nDu hör varje inspelning två gånger. Första lyssningen: fokusera på innebörd och första svaret. Andra lyssningen: kontrollera dina svar och hitta de du missade. Stavning spelar roll - skriv tydligt. Se upp med distraktorer: talare rättar ofta sig själva eller motsäger det första de säger.\\n.4. Tal tips\\nDel 1: förbered dig på att prata om dina hobbies, arbete/studier och framtidsplaner. Ge 2-3 meningssvar. Del 2: jämför fotona i ungefär 1 minut, svara sedan på den skriftliga frågan. Del 3: interagera med din partner - håll inte en monolog. Del 4: utveckla dina svar bortom en mening.",
-      "take":["Stick to time allocations for each part","Plan Writing answers before starting to write","Listen for speaker corrections and distractors","Interact naturally in Speaking Parts 3 and 4"],
-      "sections":[{"heading":"Reference","source":"Advanced Trainer, Cambridge","body":"Test 1 Training pages provide detailed timing guidance and strategy tips for each paper."}]
-    }
-  ],
-  "ielts":[{
-    "title":"IELTS Reading Strategies",
-    "txt":".1. Skimming and Scanning\\nSkimming: read the passage quickly to understand the main idea. Focus on topic sentences, headings, and concluding sentences. Time limit: 2-3 minutes per passage. Scanning: search for specific keywords, names, dates, or numbers. Use the questions to identify what to look for. Scan in an N-pattern across the text.\\n.2. Question Types and Strategies\\nTrue/False/Not Given: look for exact matches (True), contradictions (False), or missing information (Not Given). Matching Headings: read headings first, then match to paragraphs by identifying the main idea. Summary Completion: identify word type needed (noun, verb, adjective) and find synonyms in the text.\\n.3. Time Management\\nThree passages in 60 minutes: 20 minutes each. Spend 5 minutes reading, 12 minutes answering, 3 minutes checking. If stuck on a question, guess and move on. Never leave any answer blank.",
-    "translationSv":".1. Skumläsning och skanning\\nSkumläsning: läs texten snabbt för att förstå huvudidén. Fokusera på ämnesmeningar, rubriker och avslutande meningar. Tidsgräns: 2-3 minuter per text. Skanning: sök efter specifika nyckelord, namn, datum eller nummer. Använd frågorna för att identifiera vad du ska leta efter. Skanna i ett N-mönster över texten.\\n.2. Frågetyper och strategier\\nSant/Falskt/Ej angivet: leta efter exakta matchningar (Sant), motsägelser (Falskt) eller saknad information (Ej angivet). Matcha rubriker: läs rubrikerna först, matcha sedan till stycken genom att identifiera huvudidén. Sammanfattningskomplettering: identifiera vilken ordtyp som behövs (substantiv, verb, adjektiv) och hitta synonymer i texten.\\n.3. Tidshantering\\nTre texter på 60 minuter: 20 minuter varje. Lägg 5 minuter på läsning, 12 minuter på svar, 3 minuter på kontroll. Om du kör fast på en fråga, gissa och gå vidare. Lämna aldrig något svar tomt.",
-    "take":["Skim for main ideas, scan for specific information","Learn strategies for each question type","Stick to 20 minutes per passage"],
-    "sections":[{"heading":"Practice","source":"Cambridge IELTS Series","body":"Practice tests provide authentic reading passages with all question types."}]
-  },{
-    "title":"IELTS Writing Task 2 Structure",
-    "txt":".1. Essay Types\\nOpinion essays: present your view on a topic. Discussion essays: discuss both sides and give your opinion. Problem-Solution essays: identify problems and propose solutions. Advantages-Disadvantages essays: weigh both sides. Each type requires a slightly different structure.\\n.2. The Four-Paragraph Structure\\nIntroduction: paraphrase the question and state your thesis (2-3 sentences). Body 1: main point with explanation and example. Body 2: second main point with explanation and example. Conclusion: summarise your position and main points (2-3 sentences). Aim for 250-280 words.\\n.3. Coherence and Cohesion\\nUse a range of linking devices: firstly, secondly, furthermore (listing); however, on the other hand (contrasting); as a result, consequently (result); for example, for instance (examples). Use reference words: this, these, such. Avoid overusing basic linkers like 'first', 'second', 'third'.",
-    "translationSv":".1. Uppsats typer\\nÅsiktsuppsatser: presentera din syn på ett ämne. Diskussionsuppsatser: diskutera båda sidor och ge din åsikt. Problem-lösningsuppsatser: identifiera problem och föreslå lösningar. Fördelar-nackdelar uppsatser: väg båda sidor. Varje typ kräver en något annorlunda struktur.\\n.2. Fyra styckens struktur\\nInledning: omformulera frågan och ange din tes (2-3 meningar). Brödtext 1: huvudpunkt med förklaring och exempel. Brödtext 2: andra huvudpunkt med förklaring och exempel. Slutsats: sammanfatta din position och huvudpunkter (2-3 meningar). Sikta på 250-280 ord.\\n.3. Sammanhang och sammanhållning\\nAnvänd en rad länkord: för det första, för det andra, vidare (uppräkning); dock, å andra sidan (kontrast); som ett resultat, följaktligen (resultat); till exempel, till exempel (exempel). Använd referensord: detta, dessa, sådana. Undvik att överanvända grundläggande länkord som 'först', 'sedan', 'tredje'.",
-    "take":["Identify the essay type before writing","Four paragraphs: Intro, Body 1, Body 2, Conclusion","Use varied linking words for cohesion"],
-    "sections":[{"heading":"Resource","source":"Cambridge Vocabulary for IELTS Advanced","body":"Units cover topic-specific vocabulary for common Task 2 themes."}]
-  }],
-  "idioms":[{
-    "title":"Everyday Idioms for Conversation",
-    "txt":".1. Common Idioms for Feelings and Situations\\nFeelings: over the moon (very happy), down in the dumps (sad), on cloud nine (extremely happy), under the weather (ill), feel blue (sad). Situations: in the same boat (in the same situation), break the ice (start a conversation), hit the nail on the head (be exactly right), piece of cake (very easy).\\n.2. Idioms for Communication\\nSpeak your mind (say what you think), get straight to the point (be direct), beat around the bush (avoid saying something directly), see eye to eye (agree), give someone the benefit of the doubt (trust someone despite doubts). Practice using these in daily conversations.\\n.3. Learning and Remembering Idioms\\nGroup idioms by theme (feelings, work, relationships) rather than alphabetically. Create example sentences from your own life. Use flashcards with the idiom on one side and its meaning + example on the other. Review regularly.",
-    "translationSv":".1. Vanliga idiom för känslor och situationer\\nKänslor: över månen (mycket glad), nere i dumpen (ledsen), på moln nio (extremt glad), under vädret (sjuk), känna sig blå (ledsen). Situationer: i samma båt (i samma situation), bryta isen (starta en konversation), slå huvudet på spiken (ha helt rätt), en piece of cake (väldigt lätt).\\n.2. Idiom för kommunikation\\nTala ut (säga vad du tycker), komma rakt på sak (vara direkt), gå som katten kring het gröt (undvika att säga något direkt), se öga mot öga (hålla med), ge någon tvivlets fördel (lita på någon trots tvivel). Öva på att använda dessa i dagliga samtal.\\n.3. Lära och komma ihåg idiom\\nGruppera idiom efter tema (känslor, arbete, relationer) snarare än alfabetiskt. Skapa exempelmeningar från ditt eget liv. Använd flashcards med idiomet på ena sidan och dess betydelse + exempel på den andra. Repetera regelbundet.",
-    "take":["Learn idioms by theme, not alphabetically","Create personal example sentences to aid memory","Review idioms regularly using flashcards"],
-    "sections":[{"heading":"Reference","source":"English Idioms in Use","body":"Units are organized by theme with clear explanations and practice exercises."}]
-  }],
+    "academic-vocab":[
+  {
+    "title": "The Academic Word List (AWL) & Word Families",
+    "txt": ".1. What is the AWL?\nThe Academic Word List is a set of about 570 word families that appear again and again across university textbooks and research articles. Words such as analyse, concept, data, environment, factor, identify, interpret, method, process and significant all belong here. Learning these families systematically raises your reading speed and helps your own writing sound precise and academic.\n.2. Learn whole families, not single words\nEach AWL item is a family built around one headword. From the verb analyse you get analysis, analytical, analyst, analysed and unanalysed. Whenever you meet a new headword, write down its noun, verb, adjective and adverb forms together. Practising all the forms is what lets you actually use a word naturally instead of only recognising it.\n.3. A simple study routine\nGroup families by theme or starting letter, and test yourself by producing every form of a word out loud. Record one short example sentence for each headword you learn, then review the families at growing intervals. Repetition turns an unfamiliar word from a list entry into a normal part of your active vocabulary.",
+    "translationSv": ".1. Vad är AWL?\nAcademic Word List är en samling på omkring 570 ordfamiljer som återkommer ofta i akademiska texter och forskningsartiklar. Ord som analysera, begrepp, data, miljö, faktor, identifiera, tolka, metod, process och betydande ingår här. Att lära sig familjerna systematiskt förbättrar din läsförståelse och gör ditt skrivande mer precist och akademiskt.\n.2. Lär dig hela familjer, inte bara enstaka ord\nVarje AWL-ord är en familj med ett grundord. Från analysera får du analytisk, analytiker, analyserad med mera. När du möter ett nytt grundord antecknar du substantiv-, verb-, adjektiv- och adverbformen tillsammans. Att öva alla former gör att du kan använda ordet naturligt istället för att bara känna igen det.\n.3. En enkel studierutin\nGruppera familjerna efter tema eller begynnelsebokstav och testa dig själv genom att producera alla former högt. Skriv en kort exempelmening för varje grundord och repetera sedan familjerna vid allt längre intervaller. Repetitionen gör att ett okänt ord blir en naturlig del av ditt aktiva ordförråd.",
+    "take": [
+      "The AWL holds roughly 570 high-frequency academic word families",
+      "Learn each headword's full family, not just one form",
+      "Use example sentences and spaced review to keep families active"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Your vocabulary notebook",
+        "body": "Pick five headwords and write one sentence for the noun form and one for the verb form of each."
+      }
+    ]
+  },
+  {
+    "title": "Academic Register & Style",
+    "txt": ".1. Formal vs informal register\nAcademic writing uses a formal register. That means choosing full verb forms (cannot, does not), avoiding contractions, and preferring precise verbs over phrasal verbs. Write conduct an experiment rather than do an experiment, and discuss an issue rather than talk about it.\n.2. Choosing the right vocabulary\nReplace everyday words with their academic equivalents where appropriate: big becomes substantial, get becomes obtain, show becomes demonstrate, need becomes require. This does not mean using the longest word available; it means choosing the word that fits the context and the audience.\n.3. Avoiding personal and conversational language\nLimit first-person expressions such as I think and in my opinion, and avoid questions aimed at the reader. Academic prose stays objective and impersonal. When you do express judgement, support it with evidence or data instead of relying on feeling.",
+    "translationSv": ".1. Formell jämfört med informell stil\nAkademiskt skrivande använder en formell stil. Det innebär att skriva ut verbformer (cannot, does not), undvika förkortningar och föredra precisa verb istället för partikelverb. Skriv conduct an experiment istället för do an experiment och discuss an issue istället för talk about it.\n.2. Välj rätt ordförråd\nByt ut vardagsord mot akademiska motsvarigheter när det passar: big blir substantial, get blir obtain, show blir demonstrate, need blir require. Det betyder inte att du ska använda de längsta orden, utan de ord som passar sammanhanget och läsaren.\n.3. Undvik personligt och talspråkligt språk\nBegränsa uttryck som I think och in my opinion och undvik frågor riktade till läsaren. Akademisk text förblir objektiv och opersonlig. När du uttrycker en åsikt ska du stödja den med bevis eller data istället för känsla.",
+    "take": [
+      "Use full forms and avoid contractions in academic text",
+      "Prefer precise, formal verbs over phrasal verbs",
+      "Stay objective and support judgement with evidence"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Essay draft",
+        "body": "Rewrite five informal sentences from a draft into formal academic English."
+      }
+    ]
+  },
+  {
+    "title": "Hedging & Tentative Language",
+    "txt": ".1. Why academic writers hedge\nHedging means softening claims so they are not overstated. Researchers rarely say X proves Y; instead they say the results suggest, appear to indicate or may support. Hedging shows precision and honesty about the strength of your evidence.\n.2. Language tools for hedging\nUse modal verbs (may, might, could), adverbs (possibly, probably, generally, tends to), and verbs such as suggest, appear, seem, indicate and propose. Compare: The policy reduces crime vs The policy may reduce crime.\n.3. When to be strong and when to be cautious\nSave strong verbs (demonstrates, confirms) for findings that are well supported and replicated. Use cautious language for single studies, small samples and predictions. Balanced academic writing varies its certainty deliberately.",
+    "translationSv": ".1. Varför akademiska skribenter modererar sina påståenden\nAtt hedga betyder att tona ner påståenden så att de inte blir överdrivna. Forskare säger sällan att X bevisar Y; istället säger de att resultaten tyder på, verkar indikera eller kan stödja en slutsats. Hedging visar precision och ärlighet om hur starka bevisen är.\n.2. Språkliga verktyg för hedging\nAnvänd modalverb (may, might, could), adverb (possibly, probably, generally, tends to) och verb som suggest, appear, seem, indicate och propose. Jämför: policyn minskar brottsligheten med policyn kan minska brottsligheten.\n.3. När ska språket vara starkt och när försiktigt\nSpara starka verb (demonstrates, confirms) för resultat som är väl understödda och upprepade. Använd försiktigare språk för enskilda studier, små urval och prognoser. Balanserad akademisk text varierar sin säkerhet medvetet.",
+    "take": [
+      "Hedging keeps claims honest and precise",
+      "Use modals, adverbs and verbs of indication to soften claims",
+      "Be strong only when evidence is strong and replicated"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Data summary",
+        "body": "Rewrite three absolute sentences using hedging language from this lesson."
+      }
+    ]
+  },
+  {
+    "title": "Collocations in Academic English",
+    "txt": ".1. What collocations are\nA collocation is a natural combination of words that often appear together. Academic English is full of them: conduct research, draw a conclusion, provide evidence, play a role, pose a question, shed light on. Learning words inside these combinations helps you sound natural.\n.2. Recording collocations, not isolated words\nInstead of writing down research by itself, record the whole phrase (conduct research, carry out research). Note the verb that partners with each noun, and the preposition that follows each verb. This turns passive recognition into active production.\n.3. High-value academic pairs\nLearn these patterns: reach a conclusion, meet a requirement, take something into account, have an impact on, be associated with, play a significant role in. Practise building sentences around them so they become automatic.",
+    "translationSv": ".1. Vad är kollokationer?\nEn kollokation är en naturlig ordkombination som ofta förekommer tillsammans. Akademisk engelska är full av sådana: conduct research, draw a conclusion, provide evidence, play a role, pose a question, shed light on. Att lära sig ord i dessa kombinationer gör att du låter naturlig.\n.2. Anteckna kollokationer, inte isolerade ord\nSkriv inte bara ner research, utan hela frasen (conduct research, carry out research). Anteckna det verb som hör till substantivet och prepositionen som följer efter verbet. På så sätt blir orden lättare att använda aktivt.\n.3. Högt värderade akademiska kombinationer\nLär dig dessa mönster: reach a conclusion, meet a requirement, take something into account, have an impact on, be associated with, play a significant role in. Öva på att bygga meningar kring dem så att de blir automatiska.",
+    "take": [
+      "Learn words inside their natural combinations",
+      "Record the whole phrase, not a single word",
+      "Master high-value patterns like conduct research and draw a conclusion"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Abstract passage",
+        "body": "Highlight every verb + noun collocation you can find, then rebuild the sentences without looking."
+      }
+    ]
+  },
+  {
+    "title": "Paraphrasing & Summarising",
+    "txt": ".1. The difference between paraphrase and summary\nA paraphrase restates one idea in your own words, roughly the same length. A summary condenses a larger text to its main points, much shorter. Both skills show that you understand a source, and both let you use sources without copying.\n.2. Techniques for paraphrasing\nChange the vocabulary (look at becomes examine), change the word class (a conclusion was drawn instead of drew a conclusion), and change the sentence structure (active to passive, main clause to subordinate). Keep the original meaning exactly.\n.3. Summarising strategies\nRead the whole text first, then write the key point of each paragraph in one line, and finally join those lines into a short paragraph with linking words. Always record the source so you can cite it later and stay honest about your sources.",
+    "translationSv": ".1. Skillnaden mellan omskrivning och sammanfattning\nAtt parafrasera betyder att du uttrycker en idé med egna ord, ungefär lika långt som originalet. En sammanfattning pressar ihop en längre text till dess viktigaste punkter, mycket kortare. Båda färdigheterna visar att du förstår en källa och låter dig använda källor utan att kopiera.\n.2. Tekniker för omskrivning\nÄndra ordförrådet (look at blir examine), ändra ordklass (en slutsats drogs istället för att dra en slutsats) och ändra meningsstrukturen (aktiv till passiv, bisats istället för huvudsats). Behåll betydelsen exakt.\n.3. Strategier för sammanfattning\nLäs hela texten först, skriv sedan huvudpoängen i varje stycke på en rad och bind slutligen ihop raderna till ett kort stycke med länkord. Anteckna alltid källan så att du kan ange den senare och vara ärlig om var informationen kommer ifrån.",
+    "take": [
+      "Paraphrase keeps the meaning, changes the words and structure",
+      "Summaries condense a text to its main points",
+      "Always record the source when you paraphrase or summarise"
+    ],
+    "sections": [
+      {
+        "heading": "Reference",
+        "source": "Academic writing guides",
+        "body": "Combine paraphrase + summary to write a short study-note about any concept page in this course."
+      }
+    ]
+  },
+  {
+    "title": "Writing Academic Paragraphs (PEEL)",
+    "txt": ".1. The PEEL structure\nA strong academic paragraph follows PEEL: Point, Evidence, Explanation and Link. Point is the topic sentence with the main idea. Evidence is the data, quotation or example that supports it. Explanation connects the evidence back to your point. Link moves the reader to the next paragraph.\n.2. Length and focus\nAim for one main idea per paragraph, usually 100 to 200 words. If a paragraph contains two separate ideas, split it. If it has no clear point, rewrite it. One idea per paragraph keeps the argument easy to follow.\n.3. Applying PEEL in practice\nStart the paragraph with the point, then add one strong piece of evidence, explain why it matters, and close with a link to what comes next. Check every paragraph you write against these four parts before moving on.",
+    "translationSv": ".1. PEEL-strukturen\nEtt starkt akademiskt stycke följer PEEL: Point, Evidence, Explanation och Link. Point är ämnesmeningen med huvudiden. Evidence är data, citat eller exempel som stödjer idén. Explanation kopplar bevisen tillbaka till din poäng. Link för läsaren vidare till nästa stycke.\n.2. Längd och fokus\nSträva efter en huvudidé per stycke, vanligtvis 100 till 200 ord. Om ett stycke innehåller två separata idéer ska du dela på det. Om stycket saknar en tydlig poäng ska du skriva om det. En idé per stycke gör argumentet lätt att följa.\n.3. Att tillämpa PEEL i praktiken\nBörja stycket med poängen, lägg till ett starkt bevis, förklara varför det betyder något och avsluta med en övergång till nästa stycke. Kontrollera varje stycke mot de fyra delarna innan du går vidare.",
+    "take": [
+      "PEEL = Point, Evidence, Explanation, Link",
+      "Keep one main idea per paragraph",
+      "Check every paragraph against the four parts"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Sample essay",
+        "body": "Identify the Point, Evidence, Explanation and Link in three paragraphs of any sample essay."
+      }
+    ]
+  },
+  {
+    "title": "Topic Sentences & Paragraph Development",
+    "txt": ".1. The role of the topic sentence\nThe topic sentence is the first sentence of a paragraph and states its main idea. A strong one names the topic and makes a claim about it, for example: Economic growth and environmental protection do not have to conflict.\n.2. Writing a strong topic sentence\nAvoid vague openings such as This paragraph will discuss. Be specific and direct. The topic sentence should be narrow enough to cover in one paragraph, but broad enough to hold several sentences of development.\n.3. Developing the paragraph after the topic sentence\nAfter the topic sentence, support your claim with examples, reasons, evidence and explanation. Use a logical order: from general to specific, from cause to effect, or from problem to solution. End the paragraph in a way that connects it to the next one.",
+    "translationSv": ".1. Ämnesmeningens roll\nÄmnesmeningen är första meningen i ett stycke och anger styckets huvudidé. En stark sådan namnger ämnet och gör ett påstående om det, till exempel: Ekonomisk tillväxt och miljöskydd behöver inte stå i konflikt.\n.2. Skriv en stark ämnesmening\nUndvik vaga öppningar som Detta stycke kommer att diskutera. Var specifik och direkt. Ämnesmeningen ska vara tillräckligt smal för att täckas i ett stycke, men tillräckligt bred för att rymma flera meningar med utveckling.\n.3. Utveckla stycket efter ämnesmeningen\nEfter ämnesmeningen stödjer du ditt påstående med exempel, skäl, bevis och förklaringar. Använd en logisk ordning: från allmänt till specifikt, från orsak till verkan, eller från problem till lösning. Avsluta stycket så att det knyter an till nästa.",
+    "take": [
+      "The topic sentence states the paragraph's main idea",
+      "Be specific and direct, avoid 'this paragraph will discuss'",
+      "Develop claims with a clear logical order"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Your own writing",
+        "body": "Write topic sentences for five paragraphs, then draft one developed paragraph from the best sentence."
+      }
+    ]
+  },
+  {
+    "title": "Cohesion & Linking Words",
+    "txt": ".1. What makes text cohesive\nCohesion is what holds sentences together so a reader can follow the logic. Writers create cohesion with linking words, reference words and careful word choice. Without it, even correct sentences feel choppy and hard to follow.\n.2. Linking words by function\nLearn linkers in groups: adding (furthermore, in addition, moreover), contrasting (however, nevertheless, on the other hand), cause and effect (consequently, therefore, as a result) and sequencing (firstly, secondly, finally). Choose the group that matches the relationship between your ideas.\n.3. Reference words and repetition\nUse reference words such as this, these, such, the former and the latter to avoid repeating nouns. Repeat key terms deliberately for clarity, and use synonyms to avoid sounding monotonous. Cohesive writing guides the reader without confusing them.",
+    "translationSv": ".1. Vad gör text sammanhållen?\nKohesion är det som håller samman meningar så att läsaren kan följa logiken. Skribenter skapar kohesion med länkord, referensord och omsorgsfullt ordval. Utan kohesion känns även korrekta meningar hackiga och svåra att följa.\n.2. Länkord efter funktion\nLär dig länkord i grupper: tillägg (furthermore, in addition, moreover), kontrast (however, nevertheless, on the other hand), orsak och verkan (consequently, therefore, as a result) och ordningsföljd (firstly, secondly, finally). Välj den grupp som passar förhållandet mellan dina idéer.\n.3. Referensord och upprepning\nAnvänd referensord som this, these, such, the former och the latter för att slippa upprepa substantiv. Upprepa nyckeltermer medvetet för tydlighet och använd synonymer för att undvika monotoni. Sammanhållen text leder läsaren utan att förvirra.",
+    "take": [
+      "Cohesion links your ideas so the reader can follow",
+      "Use linking words in groups by function",
+      "Balance reference words, repetition and synonyms"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Academic article",
+        "body": "Underline every linking and reference word in one paragraph; then rewrite it replacing each with a suitable alternative."
+      }
+    ]
+  }
+],
+    "grammar":[
+  {
+    "title": "The English Tense System",
+    "txt": ".1. The three core tenses\nEnglish has three core times - past, present and future - and each can be simple, continuous or perfect. The present simple describes habits and facts, the present continuous describes actions in progress, and the present perfect connects the past to now: I have finished the report.\n.2. Past tenses and their uses\nUse the past simple for finished actions at a known time, the past continuous for actions in progress at a past moment, and the past perfect for an earlier action behind another past action: She had already left when we arrived.\n.3. Choosing the right tense in context\nTense choice depends on the meaning you want, not just the time. Compare I live in London (general fact) with I am living in London (temporary situation). Practise by asking yourself what aspect of the action matters: completion, duration, progress or a connection to now.",
+    "translationSv": ".1. De tre grundtempusen\nEngelskan har tre grundläggande tider - dåtid, nutid och framtid - och var och en kan vara enkel, pågående eller perfekt. Presens används för vanor och fakta, presens kontinuerlig för pågående handlingar och perfekt kopplar det förflutna till nuet: jag har slutfört rapporten.\n.2. Förflutna tider och deras användning\nAnvänd preteritum för avslutade handlingar vid en känd tidpunkt, imperfekt (past continuous) för pågående handlingar vid en tidpunkt i dåtiden och past perfect för en tidigare handling bakom en annan: hon hade redan åkt när vi kom fram.\n.3. Välj rätt tempus utifrån sammanhanget\nTempusvalet beror på vilken betydelse du vill uttrycka, inte bara tiden. Jämför I live in London (allmän fakta) med I am living in London (tillfällig situation). Öva genom att fråga dig vad som är viktigast: avslut, varaktighet, pågående eller koppling till nuet.",
+    "take": [
+      "Three core times, each with simple, continuous and perfect forms",
+      "Past perfect marks an earlier action behind another past action",
+      "Choose the tense that fits the meaning, not just the time"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Journal entry",
+        "body": "Write about your morning using at least one example of each tense family: simple, continuous and perfect."
+      }
+    ]
+  },
+  {
+    "title": "Modals & Expressing Probability",
+    "txt": ".1. What modals do\nModal verbs - can, could, may, might, must, shall, should, will, would - add meaning to the main verb: ability, permission, obligation, advice and probability. They never change their form and are always followed by a bare infinitive: He may come.\n.2. Expressing probability\nTo talk about how likely something is, use might, may and could for possibility, should for reasonable expectation, and will and must for near certainty. Compare: It might rain (possible) with It must be raining (almost certain).\n.3. Obligation and advice\nUse must for strong obligation, have to for external obligation, should and ought to for advice, and don't have to for absence of obligation. Note that mustn't means prohibition, while needn't and don't have to both mean it is not necessary.",
+    "translationSv": ".1. Vad gör modala verb\nModala verb - can, could, may, might, must, shall, should, will, would - lägger till betydelse till huvudverbet: förmåga, tillstånd, skyldighet, råd och sannolikhet. De ändrar aldrig form och följs alltid av infinitiv utan to: He may come.\n.2. Uttrycka sannolikhet\nFör att tala om hur sannolikt något är använder du might, may och could för möjlighet, should för rimlig förväntan och will och must för nästan säkerhet. Jämför: It might rain (möjligt) med It must be raining (nästan säkert).\n.3. Skyldighet och råd\nAnvänd must för stark skyldighet, have to för yttre skyldighet, should och ought to för råd och don't have to för avsaknad av skyldighet. Observera att mustn't betyder förbud, medan needn't och don't have to båda betyder att något inte är nödvändigt.",
+    "take": [
+      "Modals never change form and take a bare infinitive",
+      "might/may/could = possibility, will/must = near certainty",
+      "must = obligation, should = advice, mustn't = prohibition"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Weather report",
+        "body": "Write five sentences predicting tomorrow using different probability modals from might to must."
+      }
+    ]
+  },
+  {
+    "title": "Conditionals & Hypothetical Situations",
+    "txt": ".1. The main conditional types\nZero conditionals state facts (If you heat ice, it melts). First conditionals describe real future possibilities (If it rains, we will cancel). Second conditionals describe unlikely or imaginary present situations (If I won the lottery, I would travel).\n.2. The third conditional for the past\nThird conditionals talk about unreal past situations: If I had known, I would have come. They use the past perfect in the if-clause and would have plus past participle in the main clause. They express regret or imaginary results of past actions.\n.3. Mixed and alternative forms\nMixed conditionals combine tenses for time shifts: If I had studied harder, I would have a better job now. You can also use unless (if not), provided that and as long as for conditions, and invert the if-clause: Had I known, I would have acted differently.",
+    "translationSv": ".1. De viktigaste konditionalen\nNollkonditionalen anger fakta (If you heat ice, it melts). Första konditionalen beskriver verkliga framtida möjligheter (If it rains, we will cancel). Andra konditionalen beskriver osannolika eller tänkta nutida situationer (If I won the lottery, I would travel).\n.2. Tredje konditionalen för dåtid\nTredje konditionalen handlar om overkliga situationer i dåtiden: If I had known, I would have come. Den använder past perfect i if-satsen och would have plus perfekt particip i huvudsatsen. Den uttrycker ånger eller tänkta resultat av tidigare handlingar.\n.3. Blandade och alternativa former\nBlandade konditionaler kombinerar tider: If I had studied harder, I would have a better job now. Du kan också använda unless (om inte), provided that och as long as för villkor och invertera if-satsen: Had I known, I would have acted differently.",
+    "take": [
+      "Zero = facts, first = real future, second = imaginary present",
+      "Third conditional uses past perfect + would have for unreal past",
+      "Mixed conditionals and unless add flexibility"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Story rewrite",
+        "body": "Rewrite a short memory using second, third and one mixed conditional sentence."
+      }
+    ]
+  },
+  {
+    "title": "The Passive Voice & When to Use It",
+    "txt": ".1. Forming the passive\nThe passive is be plus the past participle: The report was written. The agent is introduced with by when it matters: The report was written by the team. Choose the passive when the action matters more than the doer, or when the doer is unknown.\n.2. Common uses of the passive\nThe passive dominates in formal and scientific writing: The samples were measured, The decision was made. It is also used when the doer is obvious, unknown or unimportant: The building was built in 1901.\n.3. Active or passive?\nActive sentences are usually shorter and clearer, so do not use the passive everywhere. Use it to focus attention on the receiver of the action, to avoid naming the doer, or to vary sentence rhythm. When you do use it, keep it natural and avoid piling up several passives in one sentence.",
+    "translationSv": ".1. Så bildas passiv\nPassiv bildas med be plus perfekt particip: The report was written. Handlaren introduceras med by när det är viktigt: The report was written by the team. Välj passiv när handlingen är viktigare än den som utför den, eller när utföraren är okänd.\n.2. Vanliga användningsområden för passiv\nPassiv dominerar i formellt och vetenskapligt skrivande: The samples were measured, The decision was made. Den används också när utföraren är självklar, okänd eller oviktig: The building was built in 1901.\n.3. Aktiv eller passiv?\nAktiva meningar är vanligtvis kortare och tydligare, så använd inte passiv överallt. Använd den för att fokusera på mottagaren av handlingen, för att undvika att namnge utföraren eller för att variera meningsrytmen. Håll passiven naturlig och stapla inte flera passiver i samma mening.",
+    "take": [
+      "Passive = be + past participle; agent comes after 'by'",
+      "Use it when the action or receiver matters more than the doer",
+      "Prefer active for clarity; use passive deliberately"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Lab report",
+        "body": "Convert three active sentences into passive ones and decide which version is stronger for each."
+      }
+    ]
+  },
+  {
+    "title": "Relative Clauses & Complex Sentences",
+    "txt": ".1. Defining and non-defining clauses\nA defining relative clause identifies which person or thing you mean: The book that I borrowed is excellent. A non-defining clause adds extra information and uses commas: My brother, who lives in Rome, is a designer. Non-defining clauses need who or which, never that.\n.2. Relative pronouns\nUse who for people, which for things, where for places and when for times. Whose shows possession: the student whose essay won. In defining clauses you can drop the pronoun when it is the object: the film (that) we watched.\n.3. Building complex sentences\nCombine simple sentences with relative clauses to show relationships between ideas. Vary the position of the clause and connect clauses with linkers to keep your writing flowing. Read long sentences aloud to check the grammar and rhythm.",
+    "translationSv": ".1. Definierande och icke-definierande bisatser\nEn definierande relativsats anger vilken person eller sak du menar: The book that I borrowed is excellent. En icke-definierande sats lägger till extra information och använder kommatecken: My brother, who lives in Rome, is a designer. Icke-definierande satser använder who eller which, aldrig that.\n.2. Relativpronomen\nAnvänd who för personer, which för saker, where för platser och when för tidpunkter. Whose visar ägande: the student whose essay won. I definierande satser kan du utelämna pronomenet när det är objektet: the film (that) we watched.\n.3. Bygg komplexa meningar\nKombinera enkla meningar med relativsatser för att visa samband mellan idéer. Variera satsens placering och koppla ihop satser med bindeord för ett naturligt flyt. Läs långa meningar högt för att kontrollera grammatik och rytm.",
+    "take": [
+      "Defining clauses identify; non-defining clauses add extra info with commas",
+      "who = people, which = things, whose = possession",
+      "Drop the pronoun in defining clauses when it is the object"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "News article",
+        "body": "Find five relative clauses in an article and classify each as defining or non-defining."
+      }
+    ]
+  },
+  {
+    "title": "Articles, Quantifiers & Countability",
+    "txt": ".1. Countable and uncountable nouns\nCountable nouns can be plural (one book, two books); uncountable nouns cannot (information, advice, furniture, equipment). The choice of article and quantifier depends on this distinction: many books but much information.\n.2. Using articles correctly\nUse the for specific nouns and unique things, a/an for one of many, and no article for general plurals and uncountables in a general sense: Dogs are loyal; I love music. Use a/an with single countable nouns and some with uncountables and plurals.\n.3. Choosing quantifiers\nUse many, few, a few and a number of with plurals; much, little, a little and a great deal of with uncountables; and some, any, several and plenty of with both. A few and a little are positive (some), while few and little are negative (not much).",
+    "translationSv": ".1. Räknebara och oräknebara substantiv\nRäknebara substantiv kan stå i plural (one book, two books); oräknebara kan inte (information, advice, furniture, equipment). Valet av artikel och kvantitetsord beror på denna skillnad: many books men much information.\n.2. Använd artiklar korrekt\nAnvänd the för specifika substantiv och unika saker, a/an för en av många och ingen artikel för plural och oräknebara i allmän betydelse: Dogs are loyal; I love music. Använd a/an med enskilda räknebara substantiv och some med oräknebara och plural.\n.3. Välj kvantitetsord\nAnvänd many, few, a few och a number of med plural; much, little, a little och a great deal of med oräknebara; och some, any, several och plenty of med båda. A few och a little är positiva (lite grann), medan few och little är negativa (inte mycket).",
+    "take": [
+      "Articles and quantifiers depend on countability",
+      "the = specific, a/an = one of many, no article = general",
+      "a few/a little are positive; few/little are negative"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Shopping list",
+        "body": "Write a paragraph about a trip using at least six different quantifiers correctly."
+      }
+    ]
+  },
+  {
+    "title": "Reported Speech & Reporting Verbs",
+    "txt": ".1. Shifting tenses and pronouns\nWhen you report what someone said, the tense usually moves back one step: She said, I am tired becomes She said she was tired. Pronouns and time words change too: here becomes there, tomorrow becomes the next day.\n.2. Reporting without backshift\nBackshift is not always needed. If the reporting verb is in the present (She says) or the situation is still true, you can keep the original tense: He said he works in London (still true). Direct quotation uses the original words with quotes.\n.3. Strong reporting verbs\nBeyond say and tell, use reporting verbs that show attitude: claim, argue, suggest, admit, deny, insist, explain, warn. These verbs often carry a specific pattern, for example suggest + that-clause or admit + doing. Choose the verb that reflects the speaker's real intention.",
+    "translationSv": ".1. Flytta tempus och pronomen\nNär du återger vad någon sa flyttas tempuset vanligtvis ett steg bakåt: She said, I am tired blir She said she was tired. Pronomen och tidsord ändras också: here blir there, tomorrow blir the next day.\n.2. Återge utan tillbakaskjutning\nTillbakaskjutning är inte alltid nödvändig. Om det återgivande verbet står i presens (She says) eller om situationen fortfarande gäller kan du behålla originaltempuset: He said he works in London (fortfarande sant). Direkt citat använder de ursprungliga orden med citattecken.\n.3. Starka återgivningsverb\nUtöver say och tell använder du återgivningsverb som visar attityd: claim, argue, suggest, admit, deny, insist, explain, warn. Dessa verb har ofta ett särskilt mönster, till exempel suggest + that-sats eller admit + -ing. Välj det verb som återspeglar talarens verkliga avsikt.",
+    "take": [
+      "Backshift moves tenses one step back when reporting",
+      "No backshift when the reporting verb is present or still true",
+      "Reporting verbs like claim, admit and insist show attitude"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Interview transcript",
+        "body": "Turn five lines of direct speech into reported speech, choosing strong reporting verbs for each."
+      }
+    ]
+  },
+  {
+    "title": "Common Errors & Advanced Register",
+    "txt": ".1. Frequent learner errors\nWatch out for common traps: confusing its and it's, mixing who and which, using the wrong preposition after a verb (interested in, good at, depend on), and forgetting the -s on the third person singular in the present simple.\n.2. Advanced register choices\nFormal and academic writing prefers specific structures: the passive where appropriate, noun phrases instead of long clauses, and precise verbs. Replace very big with enormous and a lot of with a considerable amount of when the context is formal.\n.3. Editing your own work\nRead your writing aloud and check one thing at a time: verb forms, then prepositions, then articles, then punctuation. Keep a personal list of your own recurring errors and review it before submitting. Small systematic fixes add up to a much stronger text.",
+    "translationSv": ".1. Vanliga språkfel\nSe upp för vanliga fällor: att blanda ihop its och it's, att blanda who och which, att använda fel preposition efter ett verb (interested in, good at, depend on) och att glömma -s i tredje person singular i presens.\n.2. Avancerade stilval\nFormellt och akademiskt skrivande föredrar specifika strukturer: passiv där det passar, nominalfraser istället för långa bisatser och precisa verb. Byt ut very big mot enormous och a lot of mot a considerable amount of när sammanhanget är formellt.\n.3. Redigera din egen text\nLäs din text högt och kontrollera en sak i taget: verbformer, sedan prepositioner, sedan artiklar, sedan skiljetecken. För en egen lista över dina återkommande fel och gå igenom den innan du lämnar in. Små systematiska rättelser ger en betydligt starkare text.",
+    "take": [
+      "Target the most frequent error patterns first",
+      "Formal writing prefers precise verbs and noun phrases",
+      "Edit in passes and track your recurring errors"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Your past essays",
+        "body": "Find five errors in an old piece of writing, classify each, and add them to a personal error list."
+      }
+    ]
+  }
+],
+    "ielts":[
+  {
+    "title": "Understanding the IELTS Test",
+    "txt": ".1. The four papers\nIELTS tests four skills: Listening, Reading, Writing and Speaking. Listening and Reading are scored from the number of correct answers, while Writing and Speaking are marked by trained examiners against band descriptors. Your final result is an overall band from 1 to 9.\n.2. Academic or General Training?\nChoose the Academic module for university study and the General Training module for work or migration. The Listening and Speaking papers are identical; Reading and Writing differ. Academic reading uses longer, more complex texts.\n.3. What the band scores mean\nBand 9 means an expert user and band 6 means a competent user with occasional problems. Most universities ask for bands 6.0 to 7.5. Know your target band and the score each section must contribute, then plan your preparation around the section that needs the most work.",
+    "translationSv": ".1. De fyra delarna\nIELTS testar fyra färdigheter: Listening, Reading, Writing och Speaking. Listening och Reading poängsätts utifrån antalet rätta svar, medan Writing och Speaking bedöms av utbildade examinatorer mot bandskalor. Ditt slutresultat är en total bandpoäng från 1 till 9.\n.2. Academic eller General Training?\nVälj Academic för universitetsstudier och General Training för arbete eller invandring. Listening och Speaking är identiska; Reading och Writing skiljer sig åt. Akademisk läsning använder längre och mer komplexa texter.\n.3. Vad bandpoängen betyder\nBand 9 betyder en expertanvändare och band 6 betyder en kompetent användare med enstaka problem. De flesta universitet begär band 6,0 till 7,5. Känn din målpoäng och hur mycket varje del ska bidra, och planera sedan din förberedelse kring den del som behöver mest arbete.",
+    "take": [
+      "IELTS has four papers; overall band from 1 to 9",
+      "Academic vs General Training differ in Reading and Writing",
+      "Set a target band and prepare the weakest section first"
+    ],
+    "sections": [
+      {
+        "heading": "Reference",
+        "source": "Official IELTS practice tests",
+        "body": "Take one timed Listening test and one Reading test to establish your current band before training."
+      }
+    ]
+  },
+  {
+    "title": "Writing Task 1: Describing Data",
+    "txt": ".1. What Task 1 requires\nIn Academic Task 1 you describe a chart, graph, table, map or process in at least 150 words. You do not give opinions; you select and report the key information accurately and compare the important figures.\n.2. Structure your answer\nUse a clear structure: an opening sentence that paraphrases the task, an overview paragraph summarising the main trends, and body paragraphs grouping the details. Start with the biggest changes and the clearest contrasts.\n.3. Language for data\nUse the right verbs for trends: increase, rise, grow, decline, fall, remain stable, fluctuate. Describe degrees with adverbs such as sharply, steadily and slightly. Compare with words like whereas, while and in contrast. Practise describing one graph a week until the language feels automatic.",
+    "translationSv": ".1. Vad kräver Task 1?\nI Academic Task 1 beskriver du ett diagram, en graf, en tabell, en karta eller en process i minst 150 ord. Du ger inte åsikter; du väljer ut och rapporterar den viktigaste informationen exakt och jämför viktiga siffror.\n.2. Strukturera ditt svar\nAnvänd en tydlig struktur: en inledande mening som omformulerar uppgiften, ett översiktsstycke som sammanfattar huvudtrenderna och brödtextstycken som grupperar detaljerna. Börja med de största förändringarna och de tydligaste kontrasterna.\n.3. Språk för data\nAnvänd rätt verb för trender: increase, rise, grow, decline, fall, remain stable, fluctuate. Beskriv grader med adverb som sharply, steadily och slightly. Jämför med ord som whereas, while och in contrast. Öva på att beskriva en graf i veckan tills språket känns automatiskt.",
+    "take": [
+      "Report key data and trends, do not give opinions",
+      "Paraphrase + overview + grouped body paragraphs",
+      "Learn trend verbs and comparison language"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Sample Task 1 questions",
+        "body": "Describe a bar chart in 150 words, then underline your overview sentence and check it covers the main trend."
+      }
+    ]
+  },
+  {
+    "title": "Writing Task 2: Structuring Essays",
+    "txt": ".1. Task 2 basics\nIn Task 2 you write at least 250 words in response to a question about a common issue. The task types include opinion, discussion, problem-solution and advantages-disadvantages essays. Your structure must make your position clear.\n.2. A reliable essay structure\nUse four to five paragraphs: an introduction that paraphrases the question and states your position, two body paragraphs each with one main idea supported by examples and reasons, and a conclusion that summarises your argument without adding new points.\n.3. Scoring and improvement\nExaminers assess Task Response, Coherence and Cohesion, Lexical Resource and Grammar. Answer the question fully, link your paragraphs, vary your vocabulary and check your grammar. Practise planning in under five minutes: decide your position, two body ideas and the example for each before you write.",
+    "translationSv": ".1. Grunderna i Task 2\nI Task 2 skriver du minst 250 ord som svar på en fråga om en vanlig samhällsfråga. Uppgiftstyperna omfattar åsiktsuppsatser, diskussioner, problem-lösning och fördelar-nackdelar. Din struktur måste göra din ståndpunkt tydlig.\n.2. En pålitlig uppsatsstruktur\nAnvänd fyra till fem stycken: en inledning som omformulerar frågan och anger din ståndpunkt, två brödtextstycken med en huvudidé vardera som stöds av exempel och skäl, och en slutsats som sammanfattar argumentet utan att lägga till nya punkter.\n.3. Bedömning och förbättring\nExaminatorer bedömer uppgiftssvar, sammanhållning och kohesion, ordförråd och grammatik. Svara fullständigt på frågan, koppla ihop styckena, variera ordförrådet och kontrollera grammatiken. Öva på att planera på under fem minuter: bestäm din ståndpunkt, två idéer till brödtexten och ett exempel för varje innan du börjar skriva.",
+    "take": [
+      "250+ words, clear position, four to five paragraphs",
+      "Introduction, two supported body ideas, conclusion",
+      "Plan for five minutes before you write"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Task 2 question bank",
+        "body": "Plan and write a full opinion essay, then check it against the four scoring criteria one by one."
+      }
+    ]
+  },
+  {
+    "title": "Speaking Part 1: Personal Questions",
+    "txt": ".1. What Part 1 is like\nPart 1 is a warm-up of four to five minutes. The examiner asks about familiar topics such as your home, work, studies, hobbies and daily routines. The questions are simple, but your answers should be developed, not just one word.\n.2. Extend your answers\nGive a full answer in two to four sentences: state your answer, add a reason, and give a short example. For example, if asked about your hometown, name it, say what you like about it and mention one activity you enjoy there.\n.3. Sounding natural\nSpeak at a natural pace, use everyday linking phrases (well, actually, to be honest, you know) and avoid memorised speeches. The examiner wants to hear your real English, not a prepared text. Practise answering common Part 1 questions aloud with a timer.",
+    "translationSv": ".1. Så fungerar Part 1\nPart 1 är en uppvärmning på fyra till fem minuter. Examinatorn ställer frågor om välkända ämnen som ditt hem, arbete, studier, hobbyer och vardagsrutiner. Frågorna är enkla, men dina svar ska vara utvecklade, inte bara ett ord.\n.2. Utöka dina svar\nGe ett fullständigt svar på två till fyra meningar: ange ditt svar, lägg till ett skäl och ge ett kort exempel. Om du till exempel får frågan om din hemstad, nämn den, säg vad du gillar och nämn en aktivitet du tycker om där.\n.3. Låta naturlig\nTala i naturligt tempo, använd vardagliga bindefraser (well, actually, to be honest, you know) och undvik memorerade tal. Examinatorn vill höra din riktiga engelska, inte en inövad text. Öva på att svara på vanliga Part 1-frågor högt med en timer.",
+    "take": [
+      "Part 1 covers familiar topics and lasts about five minutes",
+      "Answer + reason + example makes a strong answer",
+      "Stay natural and avoid memorised speeches"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Part 1 topic list",
+        "body": "Record yourself answering five Part 1 questions and listen for repetition and speed."
+      }
+    ]
+  },
+  {
+    "title": "Speaking Parts 2 & 3: The Long Turn & Discussion",
+    "txt": ".1. Part 2: the long turn\nIn Part 2 you speak alone for one to two minutes on a task card. Use the one minute of preparation to note keywords, not full sentences. Structure your talk with a clear beginning, middle and end.\n.2. Building the long turn\nFollow the prompts on the card in order and expand each point. Open by stating your topic, then give background, describe the details, and close with a reflection or opinion. Keep talking until the examiner stops you.\n.3. Part 3: the discussion\nPart 3 is an abstract discussion linked to your Part 2 topic. The examiner asks why, what, how and compare questions. Give opinions with reasons and examples, use hedging (I would argue, it depends) and take a clear position on big issues. Practise discussing one abstract question a day.",
+    "translationSv": ".1. Part 2: långa turen\nI Part 2 talar du själv i en till två minuter utifrån ett uppgiftskort. Använd den minut du får för förberedelse till att anteckna nyckelord, inte hela meningar. Strukturera ditt tal med en tydlig början, mitt och slut.\n.2. Bygg upp det långa talet\nFölj uppmaningarna på kortet i ordning och utveckla varje punkt. Börja med att ange ditt ämne, ge bakgrund, beskriv detaljerna och avsluta med en reflektion eller åsikt. Fortsätt tala tills examinatorn stoppar dig.\n.3. Part 3: diskussionen\nPart 3 är en abstrakt diskussion kopplad till ditt Part 2-ämne. Examinatorn ställer frågor om varför, vad, hur och jämförelser. Ge åsikter med skäl och exempel, använd hedging (I would argue, it depends) och ta en tydlig ståndpunkt i stora frågor. Öva på en abstrakt fråga om dagen.",
+    "take": [
+      "Use the prep minute to note keywords, then speak until stopped",
+      "Structure Part 2 as beginning, middle and end",
+      "In Part 3, give opinion + reason + example with hedging"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Task card set",
+        "body": "Pick a task card, prepare for one minute and record a two-minute answer using your notes."
+      }
+    ]
+  },
+  {
+    "title": "Reading: Skimming, Scanning & Question Types",
+    "txt": ".1. Managing the reading time\nThe Academic Reading paper has three long texts and 40 questions in 60 minutes. You cannot read every word carefully. Skim each text first for its topic and structure, then scan for the information a question asks about.\n.2. The main question types\nKnow the question formats: multiple choice, true-false-not given, matching headings, matching information, sentence completion and summary completion. Each type has a strategy, so practise them all rather than only your favourite.\n.3. Answering efficiently\nRead the questions before you scan, and look for synonyms and paraphrases rather than the exact words from the text. If a question says not given, check that the information is genuinely absent. Move on when you are stuck and return later with fresh eyes.",
+    "translationSv": ".1. Hantera lästiden\nAcademic Reading har tre långa texter och 40 frågor på 60 minuter. Du kan inte läsa varje ord noggrant. Skumma igenom varje text först för att förstå ämne och struktur, och skanna sedan efter den information en fråga handlar om.\n.2. De viktigaste frågetyperna\nKänn frågeformaten: flervalsfrågor, sant-falskt-inte angivet, rubrikparning, informationsparning, meningskomplettering och sammanfattningskomplettering. Varje typ har en strategi, så öva på alla istället för bara din favorit.\n.3. Svara effektivt\nLäs frågorna innan du skannar och leta efter synonymer och omskrivningar istället för exakt samma ord som i texten. Om en fråga säger not given, kontrollera att informationen verkligen saknas. Gå vidare när du fastnar och återvänd senare med nya ögon.",
+    "take": [
+      "Skim for structure, scan for answers; you can't read everything",
+      "Practise every question type, each has its own strategy",
+      "Look for paraphrases, not exact words, and check 'not given' carefully"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Reading test set",
+        "body": "Do one full timed Reading test and review each wrong answer to identify which question type you lose marks on."
+      }
+    ]
+  },
+  {
+    "title": "Listening: Signposts & Distractors",
+    "txt": ".1. How the Listening paper works\nListening has four sections that become progressively harder: a social conversation, a monologue, an educational discussion and a lecture. You hear each recording once, and you answer 40 questions in about 30 minutes.\n.2. Spotting signposts\nSignposts tell you what is coming next: first of all, however, the main point is, in contrast, finally. They show the structure of the talk and often sit right next to the answer. Practise listening for these words to know where to focus.\n.3. Avoiding distractors\nThe speaker may mention a tempting word before correcting it, for example giving the wrong date and then the right one. Wait for the final information before you decide, and check that your answer fits the word limit given in the instructions. Answer while you listen, but confirm before you move on.",
+    "translationSv": ".1. Så fungerar Listening\nListening har fyra delar som blir gradvis svårare: ett socialt samtal, en monolog, en utbildningsdiskussion och en föreläsning. Du hör varje inspelning en gång och svarar på 40 frågor på ungefär 30 minuter.\n.2. Lägg märke till signalord\nSignalord berättar vad som kommer härnäst: first of all, however, the main point is, in contrast, finally. De visar talets struktur och står ofta precis intill svaret. Öva på att lyssna efter dessa ord för att veta var du ska fokusera.\n.3. Undvik vilseledare\nTalaren kan nämna ett lockande ord innan hen rättar sig, till exempel ge fel datum och sedan det rätta. Vänta på den slutgiltiga informationen innan du bestämmer dig och kontrollera att ditt svar ryms inom ordgränsen i instruktionerna. Svara medan du lyssnar, men bekräfta innan du går vidare.",
+    "take": [
+      "Four sections from easy to hard, recordings heard once",
+      "Signposts announce the structure and often precede the answer",
+      "Wait for corrections and check the word limit"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Listening test set",
+        "body": "Do one Listening section twice: once timed, once while underlining every signpost you hear."
+      }
+    ]
+  },
+  {
+    "title": "Exam Day Strategy & Time Management",
+    "txt": ".1. The order of the day\nThe test day runs Listening, Reading and Writing in one sitting, then Speaking separately. Arrive early, know your test centre, and bring the same identity document you used to book. A calm start protects your focus for the whole day.\n.2. Managing time in each paper\nIn Reading, spend roughly 20 minutes per text and leave time to transfer answers. In Writing, give Task 2 more time than Task 1 because it is worth more. In Speaking, keep your answers focused so you cover the questions without rushing.\n.3. Staying calm under pressure\nIf a question is hard, skip it and return later instead of losing minutes. Breathe between sections, and trust your preparation. On the night before, review your notes lightly and sleep well; a fresh mind performs noticeably better than a tired one.",
+    "translationSv": ".1. Dagens ordning\nPå testdagen görs Listening, Reading och Writing i ett sällskap och därefter Speaking separat. Kom i tid, känn till ditt testcenter och ta med samma identitetshandling som du använde vid bokningen. En lugn start skyddar din koncentration hela dagen.\n.2. Tidshantering i varje del\nI Reading ägnar du ungefär 20 minuter per text och lämnar tid att föra över svar. I Writing ger du Task 2 mer tid än Task 1 eftersom den är värd mer. I Speaking håller du svaren fokuserade så att du hinner med frågorna utan att stressa.\n.3. Behåll lugnet under press\nOm en fråga är svår, hoppa över den och återvänd senare istället för att förlora minuter. Andas mellan delarna och lita på din förberedelse. Kvällen innan repeterar du lätt och sover gott; ett utvilat huvud presterar märkbart bättre än ett trött.",
+    "take": [
+      "Arrive early with the right ID and plan the test order",
+      "Give Task 2 more time than Task 1 in Writing",
+      "Skip and return, breathe, and sleep well before the day"
+    ],
+    "sections": [
+      {
+        "heading": "Reference",
+        "source": "Test day guidance",
+        "body": "Rehearse the full test-day routine at home: same times, same order and no phone, so exam day feels familiar."
+      }
+    ]
+  }
+],
+    "idioms":[
+  {
+    "title": "What Idioms Are & How to Learn Them",
+    "txt": ".1. Idioms and their meaning\nAn idiom is a fixed group of words whose meaning is different from the literal meaning of the individual words. Kick the bucket, for example, has nothing to do with buckets. Idioms are frequent in everyday speech and give language its natural colour.\n.2. Learn idioms in context\nNever learn an idiom in isolation. Always record the full sentence where you met it, together with its meaning and a parallel example. Idioms carry tone: some are neutral, some informal, some formal. Check the context before you use one.\n.3. A practical learning routine\nStudy idioms in small themed sets of five or six, use each one in a sentence about your own life, and review them at spaced intervals. Produce them in speaking and writing, not just recognise them. Over time they move from passive knowledge to active use.",
+    "translationSv": ".1. Idiom och deras betydelse\nEtt idiom är en fast ordgrupp vars betydelse skiljer sig från ordens bokstavliga betydelse. Kick the bucket, till exempel, har inget med hinkar att göra. Idiom är vanliga i vardagligt tal och ger språket dess naturliga färg.\n.2. Lär dig idiom i sammanhang\nLär dig aldrig ett idiom isolerat. Anteckna alltid hela meningen där du mötte det, tillsammans med betydelse och ett eget exempel. Idiom har en ton: vissa är neutrala, vissa informella, vissa formella. Kontrollera sammanhanget innan du använder ett.\n.3. En praktisk studierutin\nStudera idiom i små temagrupper om fem eller sex, använd varje idiom i en mening om ditt eget liv och repetera med mellanrum. Producera dem i tal och skrift, inte bara känn igen dem. Med tiden flyttas de från passiv kunskap till aktiv användning.",
+    "take": [
+      "An idiom's meaning differs from its literal words",
+      "Learn idioms in context with tone and examples",
+      "Study in small themed sets and use them actively"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Series episode",
+        "body": "Note five idioms you hear in a film or series, write their meaning, and use each in a sentence."
+      }
+    ]
+  },
+  {
+    "title": "Time & Money Idioms",
+    "txt": ".1. Time idioms worth knowing\nTime idioms are everywhere in English. Once in a blue moon means very rarely, at the eleventh hour means at the last possible moment, and time flies means the time passes quickly. Knowing these makes conversation far more natural.\n.2. Money idioms in daily use\nMoney idioms appear in business and everyday talk: cost an arm and a leg (be very expensive), break even (neither gain nor lose money), and a penny for your thoughts (asking what someone is thinking). Match the idiom to the situation carefully.\n.3. Using idioms with tone\nSome time and money idioms are neutral, while others are humorous or critical. Rip someone off (cheat someone of money) is informal, whereas make ends meet (manage financially) is everyday. Practise them in pairs and note which register each one belongs to.",
+    "translationSv": ".1. Tidsidiom värda att kunna\nTidsidiom finns överallt i engelskan. Once in a blue moon betyder mycket sällan, at the eleventh hour betyder i sista stund och time flies betyder att tiden går fort. Att kunna dessa gör samtalet betydligt mer naturligt.\n.2. Pengaidiom i vardagen\nPengaidiom förekommer i affärs- och vardagssammanhang: cost an arm and a leg (vara mycket dyr), break even (varken vinna eller förlora pengar) och a penny for your thoughts (fråga vad någon tänker på). Välj idiom utifrån situationen.\n.3. Använd idiom med rätt ton\nVissa tids- och pengaidiom är neutrala, andra humoristiska eller kritiska. Rip someone off (lura någon på pengar) är informellt, medan make ends meet (få ekonomin att gå ihop) är vardagligt. Öva dem i par och anteckna vilken stil varje idiom har.",
+    "take": [
+      "once in a blue moon = very rarely; at the eleventh hour = at the last moment",
+      "Match money idioms to formal or informal situations",
+      "Practise idioms in pairs and note their register"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "News article",
+        "body": "Write a short dialogue about planning a trip using at least three time idioms and two money idioms."
+      }
+    ]
+  },
+  {
+    "title": "Emotions & Personality Idioms",
+    "txt": ".1. Describing feelings with idioms\nIdioms make descriptions of emotions vivid. On cloud nine means extremely happy, down in the dumps means sad, and over the moon means delighted. Use them to sound natural when you talk about how you or others feel.\n.2. Personality idioms\nPeople are often described with idioms: a people person (someone who enjoys socialising), a night owl (someone active at night) and an early bird (someone active in the morning). These create quick, memorable pictures of character.\n.3. Using them accurately\nCheck the exact situation an idiom fits. Butterflies in your stomach describes nervous excitement before an event, while calm and collected describes someone composed under pressure. Practise using each idiom in the situation it belongs to, and avoid mixing idioms together.",
+    "translationSv": ".1. Beskriv känslor med idiom\nIdiom gör känslobeskrivningar levande. On cloud nine betyder mycket lycklig, down in the dumps betyder nere och over the moon betyder förtjust. Använd dem för att låta naturlig när du pratar om hur du eller andra mår.\n.2. Personlighetsidiom\nMänniskor beskrivs ofta med idiom: a people person (en som trivs med människor), a night owl (en nattmänniska) och an early bird (en morgonmänniska). Dessa skapar snabba, minnesvärda bilder av karaktär.\n.3. Använd dem korrekt\nKontrollera exakt vilken situation ett idiom passar för. Butterflies in your stomach beskriver nervös förväntan inför ett evenemang, medan calm and collected beskriver någon som behåller lugnet under press. Öva varje idiom i rätt situation och blanda inte ihop flera idiom i samma mening.",
+    "take": [
+      "on cloud nine = very happy; down in the dumps = sad",
+      "Personality idioms paint quick, memorable pictures",
+      "Match each idiom to its exact situation"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Conversation practice",
+        "body": "Describe your week to a partner using at least four emotion and personality idioms."
+      }
+    ]
+  },
+  {
+    "title": "Work & Business Idioms",
+    "txt": ".1. Idioms for everyday work\nWorkplaces are full of idioms. Get the ball rolling means start something, back to the drawing board means start over with a new plan, and on the same page means sharing the same understanding. These keep meetings and emails natural.\n.2. Talking about effort and results\nDescribing effort and results: pull out all the stops (make maximum effort), go the extra mile (do more than expected) and move the goalposts (change the rules unfairly). Notice how each idiom carries a positive or negative tone.\n.3. Business idioms with care\nBusiness idioms can sound informal in writing. Phrases like think outside the box (think creatively) and touch base (get in contact) work well in casual emails but may feel clichéd in formal reports. Match the idiom to your audience and document type.",
+    "translationSv": ".1. Idiom i vardagligt arbete\nArbetsplatser är fulla av idiom. Get the ball rolling betyder att sätta igång, back to the drawing board betyder att börja om med en ny plan och on the same page betyder att dela samma uppfattning. Dessa gör möten och mejl naturliga.\n.2. Tala om insats och resultat\nFör att beskriva insats och resultat: pull out all the stops (göra en maximal insats), go the extra mile (göra mer än förväntat) och move the goalposts (ändra reglerna orättvist). Lägg märke till vilken ton varje idiom har, positiv eller negativ.\n.3. Affärsidiom med omsorg\nAffärsidiom kan låta informella i skrift. Fraserna think outside the box (tänka kreativt) och touch base (komma i kontakt) fungerar bra i informella mejl men kan kännas slitna i formella rapporter. Anpassa idiom till mottagare och dokumenttyp.",
+    "take": [
+      "get the ball rolling = start; on the same page = shared understanding",
+      "Note the positive or negative tone of each idiom",
+      "Keep business idioms for informal writing and emails"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Email draft",
+        "body": "Write a short project email that uses three work idioms naturally without sounding forced."
+      }
+    ]
+  },
+  {
+    "title": "Health, Body & Everyday Idioms",
+    "txt": ".1. Body idioms in daily speech\nBody parts appear in many idioms. Give someone a hand means help someone, under the weather means feeling unwell, and get off on the wrong foot means start badly. These idioms are very common in casual conversation.\n.2. Health idioms and expressions\nTo talk about health naturally: back on your feet (recovered), feeling rough (not well) and fighting fit (in good shape). Use them to describe recovery and condition in everyday talk.\n.3. Everyday idioms for fluency\nMany everyday idioms add warmth: break the ice (start a conversation), it is not rocket science (it is not difficult) and piece of cake (very easy). Overusing idioms sounds unnatural, so aim for one or two per conversation rather than filling every sentence with them.",
+    "translationSv": ".1. Kroppsidiom i vardagligt tal\nKroppsdelar förekommer i många idiom. Give someone a hand betyder att hjälpa någon, under the weather betyder att känna sig dålig och get off on the wrong foot betyder att börja dåligt. Dessa idiom är mycket vanliga i avslappnade samtal.\n.2. Hälsoidiom och uttryck\nFör att prata om hälsa naturligt: back on your feet (återställd), feeling rough (inte bra) och fighting fit (i god form). Använd dem för att beskriva tillfrisknande och kondition i vardagsspråk.\n.3. Vardagsidiom för flyt\nMånga vardagsidiom ger värme: break the ice (inleda ett samtal), it is not rocket science (det är inte svårt) och piece of cake (mycket lätt). Att överanvända idiom låter onaturligt, så sikta på ett eller två per samtal istället för att fylla varje mening.",
+    "take": [
+      "Body idioms are frequent in casual English",
+      "Health idioms describe condition and recovery",
+      "Use one or two idioms per conversation, not one per sentence"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Daily conversation",
+        "body": "Use at least three body or health idioms in a conversation about your day and how you feel."
+      }
+    ]
+  },
+  {
+    "title": "Phrasal Verbs with UP & DOWN",
+    "txt": ".1. The many meanings of up\nUp appears in dozens of phrasal verbs. Look up a word means search for it, give up means stop trying, and make up means invent or reconcile. The same particle can carry very different meanings, so learn each verb separately.\n.2. Down and its uses\nDown often signals reduction or failure. Break down means stop working or lose control, cut down means reduce, and let down means disappoint. Notice how the particle shapes the whole verb's meaning.\n.3. Learning phrasal verbs systematically\nGroup phrasal verbs by particle and by topic. Practise separable and inseparable forms: look the word up and look it up are both correct, but look after the children cannot be split. Test yourself by making a sentence for each verb you meet.",
+    "translationSv": ".1. De många betydelserna av up\nUp förekommer i många partikelverb. Look up a word betyder att slå upp, give up betyder att ge upp och make up betyder att hitta på eller försonas. Samma partikel kan ha mycket olika betydelser, så lär dig varje verb för sig.\n.2. Down och dess användning\nDown signalerar ofta minskning eller misslyckande. Break down betyder att sluta fungera eller bryta samman, cut down betyder att minska och let down betyder att svika. Lägg märke till hur partikeln formar hela verbets betydelse.\n.3. Lär dig partikelverb systematiskt\nGruppera partikelverb efter partikel och ämne. Öva på separerbara och icke-separerbara former: look the word up och look it up är båda korrekta, men look after the children kan inte delas. Testa dig själv genom att göra en mening för varje verb du möter.",
+    "take": [
+      "The same particle can change meaning completely",
+      "Group phrasal verbs by particle and topic",
+      "Learn which verbs are separable and which are not"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Diary entry",
+        "body": "Write about your day using five up-verbs and five down-verbs in correct sentences."
+      }
+    ]
+  },
+  {
+    "title": "Phrasal Verbs with OFF, OUT & ON",
+    "txt": ".1. Phrasal verbs with off\nOff often signals departure, cancellation or separation. Set off means start a journey, call off means cancel, and put off means postpone. In formal writing, prefer synonyms such as depart, cancel and postpone.\n.2. Phrasal verbs with out\nOut commonly means to a finish or a discovery. Find out means discover, work out means solve or exercise, and run out of means use up. Carry out (perform) is a useful formal alternative to do.\n.3. Phrasal verbs with on\nOn can mean continuation, progress or wearing clothes. Carry on means continue, get on with means have a good relationship or proceed, and put on means wear. Practise each group with examples so the particle meanings become automatic.",
+    "translationSv": ".1. Partikelverb med off\nOff signalerar ofta avfärd, avbokning eller separation. Set off betyder att ge sig i väg, call off betyder att ställa in och put off betyder att skjuta upp. I formellt skrivande föredrar du synonymer som depart, cancel och postpone.\n.2. Partikelverb med out\nOut betyder ofta att något slutförs eller upptäcks. Find out betyder att ta reda på, work out betyder att lösa eller träna och run out of betyder att få slut på. Carry out (utföra) är ett användbart formellt alternativ till do.\n.3. Partikelverb med on\nOn kan betyda fortsättning, framsteg eller att klä på sig. Carry on betyder att fortsätta, get on with betyder att komma överens eller fortsätta och put on betyder att ta på sig. Öva varje grupp med exempel så att partikelns betydelse blir automatisk.",
+    "take": [
+      "off = departure/cancellation, out = discovery/finish, on = continuation",
+      "Prefer formal synonyms in academic writing",
+      "Practise each particle group with examples"
+    ],
+    "sections": [
+      {
+        "heading": "Practice",
+        "source": "Story writing",
+        "body": "Write a short story using three off-verbs, three out-verbs and three on-verbs."
+      }
+    ]
+  }
+],
   "advanced-english":[{
     "title":"Advanced Grammar Structures",
     "txt":".1. Inversion for Emphasis\\nInversion changes normal word order to add emphasis. After negative adverbials: Never have I seen such a beautiful sunset. Not only did she finish first, but she also broke the record. Rarely do we encounter such dedication. Only after the meeting did we understand the problem.\\n.2. Cleft Sentences\\nCleft sentences highlight a specific part of the sentence. What-clauses: What I need is a break. What surprised me was his reaction. It-clauses: It was John who called. It was yesterday that we heard the news. The reason why... is that...\\n.3. Participle Clauses\\nParticiple clauses make sentences more concise. Present participle (-ing): Walking home, I met an old friend. Past participle (-ed): Exhausted by the journey, she went straight to bed. Perfect participle (having + past participle): Having finished his work, he left the office.",
@@ -1819,7 +2273,7 @@ function switchCourse(){
   if(activeTab==='flash')renderFlash();
    else if(activeTab==='quiz')showQuizStart();
    else if(activeTab==='match'){matchSelected=null;document.getElementById('matchGame').style.display='none';showMatchStart();}
-   else if(activeTab==='concepts'){updateConceptCourseSel();renderCourseContent();}
+   else if(activeTab==='concepts'){updateConceptCourseSel();renderConceptList();}
    else if(activeTab==='cloze')showClozeStart();
    else if(activeTab==='unscramble')showUnsStart();
    else if(activeTab==='exercises'){updateExerciseSelect();renderExercise();}
@@ -3254,13 +3708,81 @@ function renderCourseContent(){
    }).join('')+'</div></div>':'')+
    (concept.take&&concept.take.length?'<div class="concept-body-wrap" style="padding:16px 24px;border-left:3px solid var(--accent);margin-top:14px"><h4 style="color:var(--accent);font-size:0.85rem;margin-bottom:10px">&#128161; Key Takeaways</h4><ul style="margin:0;padding-left:18px">'+concept.take.map(t=>'<li style="font-size:0.85rem;margin-bottom:8px;line-height:1.5;color:var(--text)">'+t+'</li>').join('')+'</ul></div>':'')+
    (concept.sections&&concept.sections.length?'<div style="margin-top:14px">'+concept.sections.map(s=>'<div class="concept-resources-section"><h4 style="font-size:0.85rem;margin-bottom:8px;color:var(--text)">'+s.heading+'</h4><div style="font-size:0.8rem;color:var(--text-tertiary);margin-bottom:8px">Source: '+s.source+'</div><div style="font-size:0.85rem;line-height:1.7;color:var(--text-secondary)">'+s.body+'</div></div>').join('')+'</div>':'')+
+   (function(){
+    let ci2=parseInt(topicIdx),courseId=courses[courseIdx].id;
+    let read=isConceptRead(courseId,ci2);
+    let hasPrev=ci2>0,hasNext=ci2<courseConcepts.length-1;
+    return '<div class="concept-nav"><button class="concept-nav-btn" onclick="conceptNav(-1)"'+(hasPrev?'':' disabled')+'>&#9664; Prev</button><button class="concept-nav-btn concept-read-btn" onclick="toggleConceptRead()">'+(read?'&#10003; Read':'Mark as Read')+'</button><button class="concept-nav-btn" onclick="conceptNav(1)"'+(hasNext?'':' disabled')+'>Next &#9654;</button></div>';
+   })()+
    '</div>';
 }
-document.getElementById('conceptCourse').addEventListener('change',function(){
-  document.getElementById('conceptTopic').innerHTML='<option value="">Select a topic...</option>';
+function getConceptProgress(){try{return JSON.parse(localStorage.getItem('conceptProgress')||'{}')}catch(e){return{};}}
+function saveConceptProgress(o){localStorage.setItem('conceptProgress',JSON.stringify(o));}
+function isConceptRead(courseId,idx){let o=getConceptProgress();return !!(o[courseId]&&o[courseId].indexOf(idx)>=0);}
+function toggleConceptRead(){
+  let courseIdx=parseInt(document.getElementById('conceptCourse').value);
+  let topicSel=document.getElementById('conceptTopic');
+  if(courseIdx<0||topicSel.value==='')return;
+  let courseId=courses[courseIdx].id,idx=parseInt(topicSel.value);
+  let o=getConceptProgress();o[courseId]=o[courseId]||[];
+  let p=o[courseId].indexOf(idx);
+  if(p>=0)o[courseId].splice(p,1);else o[courseId].push(idx);
+  saveConceptProgress(o);
+  renderCourseContent();renderConceptList();
+}
+function conceptNav(dir){
+  let courseIdx=parseInt(document.getElementById('conceptCourse').value);
+  let topicSel=document.getElementById('conceptTopic');
+  if(courseIdx<0)return;
+  let courseConcepts=concepts[courses[courseIdx].id]||[];
+  let cur=topicSel.value===''?0:parseInt(topicSel.value);
+  let nx=cur+dir;
+  if(nx<0||nx>=courseConcepts.length)return;
+  topicSel.value=String(nx);
   renderCourseContent();
+  let r=document.getElementById('conceptContent');if(r)r.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function renderConceptList(){
+  let courseIdx=parseInt(document.getElementById('conceptCourse').value);
+  let listEl=document.getElementById('conceptList');
+  let progEl=document.getElementById('conceptProgress');
+  let topicSel=document.getElementById('conceptTopic');
+  if(courseIdx<0||!concepts||!concepts[courses[courseIdx].id]){
+   listEl.innerHTML='';progEl.style.display='none';
+   topicSel.innerHTML='<option value="">Select a topic...</option>';
+   showConceptStart();return;
+  }
+  let courseId=courses[courseIdx].id;
+  let courseConcepts=concepts[courseId]||[];
+  topicSel.innerHTML='<option value="">Select a topic...</option>'+courseConcepts.map((c,i)=>'<option value="'+i+'">'+c.title+'</option>').join('');
+  let q=(document.getElementById('conceptSearch').value||'').toLowerCase();
+  let visible=courseConcepts.map((c,i)=>({c:c,i:i})).filter(x=>!q||x.c.title.toLowerCase().includes(q));
+  let cs=document.getElementById('conceptStart');if(cs)cs.style.display='none';
+  let read=isConceptRead;
+  let o=getConceptProgress();let readSet=o[courseId]||[];
+  let nRead=courseConcepts.filter((c,i)=>readSet.indexOf(i)>=0).length;
+  progEl.style.display='block';
+  progEl.innerHTML='<div class="concept-progress-head"><span>&#128161; '+courseConcepts.length+' lessons</span><span>'+(q?'Search: '+q+' &middot; ': '')+nRead+'/'+courseConcepts.length+' read</span></div><div class="concept-progress-bar"><div class="concept-progress-fill" style="width:'+Math.round(100*nRead/courseConcepts.length)+'%"></div></div>';
+  if(!visible.length){
+   listEl.innerHTML='<div class="empty-state" style="margin:20px 0"><div class="icon">&#128269;</div><p>No lessons match your search.</p></div>';
+   return;
+  }
+  listEl.innerHTML=visible.map(function(v){
+   let isRead=readSet.indexOf(v.i)>=0;
+   return '<button class="concept-lesson-card" onclick="openConceptLesson('+v.i+')" style="animation:scaleIn 0.25s '+((v.i%5)*0.03)+'s both"><span class="concept-lesson-check">'+(isRead?'&#10003;':'')+'</span><span class="concept-lesson-main"><span class="concept-lesson-title">'+v.c.title+'</span><span class="concept-lesson-meta">'+(v.c.take&&v.c.take.length?v.c.take.length+' key takeaways':'')+(isRead?' &middot; read':'')+'</span></span><span class="concept-lesson-open">Read &#9654;</span></button>';
+  }).join('');
+}
+function openConceptLesson(i){
+  let topicSel=document.getElementById('conceptTopic');
+  topicSel.value=String(i);
+  renderCourseContent();
+  let r=document.getElementById('conceptContent');if(r)r.scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.getElementById('conceptCourse').addEventListener('change',function(){
+  document.getElementById('conceptSearch').value='';
+  renderConceptList();
 });
-document.getElementById('conceptTopic').addEventListener('change',renderCourseContent);
+document.getElementById('conceptSearch').addEventListener('input',renderConceptList);
 function updateExerciseSelect(){
   let sel=document.getElementById('exerciseSelect');
   if(!sel)return;
@@ -3640,8 +4162,14 @@ function renderResources(){
    grid.innerHTML='<div class="empty-state"><div class="icon">&#128206;</div><p>No resources match your search.</p></div>';
    return;
   }
-  grid.innerHTML=filtered.map((r,i)=>'<a class="resource-card" href="'+(r.url||r.file||'about:blank')+'" target="_blank" rel="noopener" style="animation:scaleIn 0.3s '+(i*0.03)+'s both;text-decoration:none"><span class="res-icon">'+(r.typeIcon?r.typeIcon.split(' ')[0]:'&#128218;')+'</span><span class="res-info"><span class="res-name">'+r.name+'</span>'+(r.desc?'<span class="res-desc">'+r.desc+'</span>':'')+(r.course?'<span class="res-course">'+r.course+'</span>':'')+(r.level?'<span class="res-level">'+r.level+'</span>':'')+'</span><span class="res-open">Open</span></a>').join('');
-}
+grid.innerHTML=filtered.map(function(r,i){
+    let href=r.url||r.file||null;
+    let info='<span class="res-info"><span class="res-name">'+r.name+'</span>'+(r.desc?'<span class="res-desc">'+r.desc+'</span>':'')+(r.course?'<span class="res-course">'+r.course+'</span>':'')+(r.level?'<span class="res-level">'+r.level+'</span>':'')+'</span>';
+    if(!href)return '<div class="resource-card res-pending" style="animation:scaleIn 0.3s '+(i*0.03)+'s both"><span class="res-icon">'+(r.typeIcon?r.typeIcon.split(' ')[0]:'&#128206;')+'</span>'+info+'<span class="res-open">Link pending</span></div>';
+    let label=r.url?'<span class="res-open">'+r.typeIcon.split(' ')[0]+' External</span>':'<span class="res-open">Open</span>';
+    return '<a class="resource-card" href="'+href+'" target="_blank" rel="noopener" style="animation:scaleIn 0.3s '+(i*0.03)+'s both;text-decoration:none"><span class="res-icon">'+(r.typeIcon?r.typeIcon.split(' ')[0]:'&#128206;')+'</span>'+info+label+'</a>';
+   }).join('');
+  }
 document.getElementById('resSearch').addEventListener('input',renderResources);
 document.getElementById('resLevel').addEventListener('change',renderResources);
 function updateExamCourseSel(){
@@ -4014,7 +4542,7 @@ function renderHome(){
   el.innerHTML=
    '<div class="home-greet">Hello! &#128075;</div>'+
    '<div class="home-sub">Ready to continue learning English?</div>'+
-   '<div class="home-version">Build v1.2 &middot; App Mode</div>'+
+   '<div class="home-version">Build v1.3 &middot; App Mode</div>'+
    '<div class="home-stats">'+statsCards+'</div>'+
    '<div class="home-section"><div class="home-section-title">Courses</div><div class="course-list">'+courseCards+'</div></div>'+
    '<div class="dash-quick"><div class="dash-header">Quick Actions</div><div class="dash-qa-row">'+qaBtns+'</div></div>'+
@@ -4156,7 +4684,7 @@ function goToTab(id){
   if(id==='match'){updateMatchCourseSel();updateMatchCategorySel();document.getElementById('matchGame').style.display='none';showMatchStart();}
   if(id==='cloze'){updateClozeCategorySel();showClozeStart();}
   if(id==='unscramble'){updateUnsCategorySel();showUnsStart();}
-  if(id==='concepts'){updateConceptCourseSel();renderCourseContent();}
+  if(id==='concepts'){updateConceptCourseSel();renderConceptList();}
   if(id==='exercises'){updateExerciseSelect();renderExercise();}
   if(id==='exam'){updateExamCourseSel();updateExamCategorySel();showExamStart();}
   if(id==='browse'){updateBrowseCourseSel();}
@@ -4180,7 +4708,7 @@ function beginMatch(){let el=document.getElementById('matchSetup');if(el){el.sty
 function showExamStart(){let el=document.getElementById('examStart');if(el){el.style.display='flex';}}
 function beginExam(){let el=document.getElementById('examStart');if(el){el.style.display='none';}initExam();}
 function showConceptStart(){let el=document.getElementById('conceptStart');if(el){el.style.display='flex';}}
-function beginConcepts(){let el=document.getElementById('conceptStart');if(el){el.style.display='none';}renderCourseContent();}
+function beginConcepts(){let el=document.getElementById('conceptStart');if(el){el.style.display='none';}renderConceptList();}
 function showExerciseStart(){let el=document.getElementById('exerciseStart');if(el){el.style.display='flex';}}
 function beginExercises(){let el=document.getElementById('exerciseStart');if(el){el.style.display='none';}renderExercise();}
 document.querySelectorAll('.nav-item').forEach(btn=>{btn.addEventListener('click',function(){
@@ -4197,7 +4725,7 @@ document.querySelectorAll('.nav-item').forEach(btn=>{btn.addEventListener('click
     browseCourseVal=-1;
     let bs=document.getElementById('browseCourse');bs.value='-1';
     initFilterRow();renderBrowse();
-  }else if(mode==='concepts'&&id==='concepts'){updateConceptCourseSel();renderCourseContent();}
+  }else if(mode==='concepts'&&id==='concepts'){updateConceptCourseSel();renderConceptList();}
   else if(mode==='recall'&&id==='flash'){updateFlashCategorySel();flashCategory=document.getElementById('flashCategory').value;rebuildFlashOrder();renderFlash();}
   if(id==='flash'){updateFlashCategorySel();flashCategory=document.getElementById('flashCategory').value;showFlashStart();}
   else if(id==='learn'){updateLearnCourseSel();showLearnStart();}
@@ -4208,7 +4736,7 @@ document.querySelectorAll('.nav-item').forEach(btn=>{btn.addEventListener('click
   else if(id==='cloze'){updateClozeCategorySel();showClozeStart();}
   else if(id==='unscramble'){updateUnsCategorySel();showUnsStart();}
   else if(id==='browse'){updateBrowseCourseSel();}
-    else if(id==='concepts'){updateConceptCourseSel();renderCourseContent();}
+    else if(id==='concepts'){updateConceptCourseSel();renderConceptList();}
   else if(id==='exercises'){updateExerciseSelect();renderExercise();}
   else if(id==='resources'){renderResources();}
     else if(id==='exam'){updateExamCourseSel();updateExamCategorySel();showExamStart();}
